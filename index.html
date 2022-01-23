@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <title>(っ ^ з ^) 💖 🌮 </title>
+  <script type="module" src="./model-viewer.min.js"></script>
+</head>
+<body>
+  <div id="content">
+    <div id="header-cta" class="hidden">
+      <span>⚠️ Viewing anonymously! <a href="#" id="exit-anon">Exit</a> and sync to view wallet. ⚠️</span>
+    </div>
+    <div id="header">
+      <div class="border-box"></div>
+      <pre id="title">
+░█████╗░██████╗░░░░░░██╗██╗░░██╗████████╗██╗██╗░░░██╗
+██╔══██╗██╔══██╗░░░░░██║██║░██╔╝╚══██╔══╝██║██║░░░██║
+██║░░██║██████╦╝░░░░░██║█████═╝░░░░██║░░░██║╚██╗░██╔╝
+██║░░██║██╔══██╗██╗░░██║██╔═██╗░░░░██║░░░██║░╚████╔╝░
+╚█████╔╝██████╦╝╚█████╔╝██║░╚██╗░░░██║░░░██║░░╚██╔╝░░
+░╚════╝░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░
+      </pre>
+      <div id="title-subheading">
+        <pre>
+▀▀█▀▀ █▀▀ ▀▀█ █▀▀█ █▀▀ 　 ░█▄─░█ ░█▀▀▀ ▀▀█▀▀ 　 ▀█─█▀ ─▀─ █▀▀ █───█ █▀▀ █▀▀█
+─░█── █▀▀ ▄▀─ █──█ ▀▀█ 　 ░█░█░█ ░█▀▀▀ ─░█── 　 ─█▄█─ ▀█▀ █▀▀ █▄█▄█ █▀▀ █▄▄▀
+─░█── ▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀ 　 ░█──▀█ ░█─── ─░█── 　 ──▀── ▀▀▀ ▀▀▀ ─▀─▀─ ▀▀▀ ▀─▀▀
+        </pre>
+      </div>
+    </div>
+    <div id="nav">
+      <div id="wallet-lookup-container">
+        <div id="wallet-lookup-submit">View Wallet</div>
+        <div id="wallet-lookup-input" contenteditable wrap='off'></div>
+      </div>
+      <br id="wallet-lookup-break"/>
+      <a id="sync" href="#">sync</a>
+      <a id="about" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">❓</a>
+      <a id="day-night-toggle" href="#">☀️/🌙</a>
+      <span id="wallet-nav" class="hidden">
+        <a id="galleries-link" href="#">🖼️</a>
+      </span>
+      <div id="page-control-nav" class="hidden">
+        <span>Per Page:&nbsp;</span>
+        <span id="decrease-items-per-page">⏪</span>
+        <span id="items-per-page">10</span>
+        <span id="increase-items-per-page">⏩</span>
+      </div>
+    </div>
+    <div id="gallery-list-container" class="hidden">
+      <div id="gallery-list-wrapper">
+        <div id="gallery-list">
+          <div id="gallery-list-header">
+            <div class="border-box"></div>
+            <div id="gallery-list-exit">❌</div>
+            <p>Your Galleries</p>
+          </div>
+          <span id="new-gallery-submit">+</span><div id="new-gallery-input" contenteditable wrap='off'></div>
+          <div id="gallery-link-container"></div>
+        </div>
+      </div>
+    </div>
+    <div id="main-content"></div>
+    <div id="viewer-window" class="hidden">
+      <div id="viewer-window-content">
+      </div>
+      <div id="viewer-window-content-nav">
+        <div id="objkt-title">
+          <span id="objkt-name"></span>
+          <span id="artist-name"></span>
+        </div>
+        <div id="bg-color-picker">
+          <div id="bg-color-picker-menu" class="hidden"></div>
+          <div id="selected-bg-color"></div>
+        </div>
+        <div id="hex-color-picker-container" class="hidden">
+          <div contenteditable="true" id="hex-color-picker" wrap='off'></div>
+          <span id="hex-color-picker-submit">+</span>
+        </div>
+      </div>
+    </div>
+    <div id="next-page-controls" class="hidden">
+      <a id="previous-page" class="previous-page-button" href="#">⏪ Previous Page</a>
+      <a id="previous-page-mobile" class="previous-page-button" href="#">⏪ Page</a>
+      <span id="next-page-control-flare">💀</span>
+      <a id="next-page" class="next-page-button" href="#">Next Page ⏩</a>
+      <a id="next-page-mobile" class="next-page-button" href="#">Page ⏩</a>
+    </div>
+    <div id="footer-push">
+    </div>
+    <div id="footer">
+      <p>This is an experimental dApp <span id="footer-dash">-</span><br id="footer-break"/> Use at your own risk</p>
+    </div>
+  </div>
+  <script src="./beacon-sdk.min.js"></script>
+  <script src="./script.min.js"></script>
+</body>
+</html>
