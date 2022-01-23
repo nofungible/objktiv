@@ -1,22 +1,9 @@
 (function () {
-    // var footerFlare = document.getElementById('next-page-control-flare');
+    // Block TEA crypto algo https://www.movable-type.co.uk/scripts/tea-block.html
+    !function(){function r(r,e){if(r=String(r),e=String(e),0==r.length)return"";var t=o(i(r)),u=o(i(e).slice(0,16)),c=n(t,u),d=f(c),h=a(d);return h}function e(r,e){if(r=String(r),e=String(e),0==r.length)return"";var n=o(c(r)),a=o(i(e).slice(0,16)),d=t(n,a),h=f(d),l=u(h.replace(/\0+$/,""));return l}function n(r,e){r.length<2&&(r[1]=0);for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=0;i-->0;){c+=f,t=c>>>2&3;for(var d=0;o>d;d++)a=r[(d+1)%o],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),u=r[d]+=n}return r}function t(r,e){for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=i*f;0!=c;){t=c>>>2&3;for(var d=o-1;d>=0;d--)u=r[d>0?d-1:o-1],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),a=r[d]-=n;c-=f}return r}function o(r){for(var e=new Array(Math.ceil(r.length/4)),n=0;n<e.length;n++)e[n]=r.charCodeAt(4*n)+(r.charCodeAt(4*n+1)<<8)+(r.charCodeAt(4*n+2)<<16)+(r.charCodeAt(4*n+3)<<24);return e}function f(r){for(var e="",n=0;n<r.length;n++)e+=String.fromCharCode(255&r[n],r[n]>>>8&255,r[n]>>>16&255,r[n]>>>24&255);return e}function i(r){return unescape(encodeURIComponent(r))}function u(r){try{return decodeURIComponent(escape(r))}catch(e){return r}}function a(r){if("undefined"!=typeof btoa)return btoa(r);if("undefined"!=typeof Buffer)return new Buffer(r,"binary").toString("base64");throw new Error("No Base64 Encode")}function c(r){if("undefined"==typeof atob&&"undefined"==typeof Buffer)throw new Error("No base64 decode");try{if("undefined"!=typeof atob)return atob(r);if("undefined"!=typeof Buffer)return new Buffer(r,"base64").toString("binary")}catch(e){throw new Error("Invalid ciphertext")}}window.BlockTEACrypto={encrypt:r,decrypt:e}}();
 
-    // function replaceEmoji() {
-    //     if (footerFlare) {
-    //         var newEmoji = randomEmoji();
-
-    //         if (newEmoji !== footerFlare.innerText) {
-    //             footerFlare.innerText = newEmoji;
-    //         } else {
-    //             replaceEmoji();
-    //         }
-    //     }
-    // }
-
-    // setInterval(replaceEmoji, 200);
-   
-   //////////
-
+    var BLOCK_TEA_PASSPHRASE = 'abc123';
+    var BlockTEACrypto = window.BlockTEACrypto;
     var DEFAULT_PER_PAGE = 10;
     var DEFAULT_VIEWER_BG_COLOR = 'black';
     var SESSION_STORE_KEY = 'objktiv-session-store';
@@ -55,6 +42,7 @@
         skipCounts: {
             hic: 0,
             fxhash: 0,
+            objktcom: 0
         },
         pageSkips: [],
         session: sessionStore.default,
@@ -383,9 +371,37 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         document.getElementById('hex-color-picker-container').classList.add('hidden');
     }
 
+    function closePopUp() {
+        document.getElementById('pop-up-container').classList.add('hidden');
+        document.getElementById('gallery-link-content').classList.add('hidden');
+        document.getElementById('settings-content-container').classList.add('hidden');
+    }
+
     function attachHandlers() {
-        document.getElementById('title-subheading').addEventListener('click', function() {
-            window.location.href = window.location.href.split('#')[0].split('?')[0];
+        document.addEventListener('keydown', function(evt) {
+            if (evt.code && evt.code === 'Escape' || evt.keyCode && evt.keyCode === 27) {
+                document.getElementById('sidebar').classList.add('hidden');
+                closePopUp();
+            }        
+        });
+
+        var sidebarLinks = document.getElementsByClassName('sidebar-link');
+
+        for (var i = 0; i < sidebarLinks.length; i++) {
+            sidebarLinks[i].addEventListener('click', function() {
+                document.getElementById('sidebar').classList.add('hidden');
+            }, false);
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            var sidebar = document.getElementById('sidebar');
+            var classArr = Array.prototype.slice.call(sidebar.classList);
+
+            if (classArr.indexOf('hidden') === -1) {
+                sidebar.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('hidden');
+            }
         });
 
         document.getElementById('title').addEventListener('click', function() {
@@ -397,9 +413,62 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             evt.preventDefault();
         });
 
-        document.getElementById('gallery-list-exit').addEventListener('click', function() {
-            document.getElementById('gallery-list-container').classList.add('hidden');
+        document.getElementById('settings-link').addEventListener('click', function(evt) {
+            openSettingsMenu();
+            evt.preventDefault();
         });
+
+        document.getElementById('settings-import-submit').addEventListener('click', function(evt) {
+            if (Array.prototype.slice.call(evt.target.classList).indexOf('disabled') !== -1) {
+                return false;
+            }
+
+            var possibleJSON = document.getElementById('settings-import-input').innerText;
+            var settings;
+
+            document.getElementById("settings-import-input").innerText = '';
+
+            try {
+                settings = BlockTEACrypto.decrypt(possibleJSON, BLOCK_TEA_PASSPHRASE);
+                settings = JSON.parse(settings);
+
+                if (typeof settings !== 'object' || Array.isArray(settings)) {
+                    throw('Settings not an object');
+                }
+            } catch (err) {
+                console.log('Settings import input not valid settings', err);
+
+                settings = null;
+            }
+
+            if (settings) {
+                state.session = settings;
+
+                storeSession();
+                applySessionPreferences();
+            }
+        });
+
+        document.getElementById('settings-export-submit').addEventListener('click', function() {
+            document.getElementById('settings-export-text').focus();
+            copyToClipboard(document.getElementById('settings-export-text').innerText);
+
+
+            function copyToClipboard(input) {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(input).then(() => {
+                    alert('Settings copied to clipboard');
+                  }, (err) => {
+                    alert('Failed to copy settings - Copy settings manually');
+                  });
+                } else if (window.clipboardData) {
+                  window.clipboardData.setData("Text", input);
+                }
+              }
+        });
+
+        document.getElementById('pop-up-exit').addEventListener('click', closePopUp);
+        document.getElementById('pop-up-exit-overlay').addEventListener('click', closePopUp);
 
         var newGallerySubmitHandler = function(evt) {
             var newGalleryName = document.getElementById('new-gallery-input').textContent;
@@ -410,6 +479,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                     displayName: newGalleryName,
                     hic: [],
                     fxhash: [],
+                    objktcom: [],
                 };
 
                 state.session.galleryIndex += 1;
@@ -496,6 +566,23 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         document.getElementById('hex-color-picker-submit').addEventListener('click', hexColorSubmitHandler);
 
+        document.getElementById("settings-import-input").addEventListener("input", function() {
+            const text = document.getElementById("settings-import-input").innerText;
+
+            document.getElementById("settings-import-input").innerHTML = '';
+            document.getElementById("settings-import-input").innerText = '';
+            document.getElementById("settings-import-input").innerText = text.replace('\n', '');
+
+            var settingsInput = document.getElementById('settings-import-submit');
+
+            console.log(text);
+            if (text) {
+                settingsInput.classList.remove('disabled');
+            } else {
+                settingsInput.classList.add('disabled');
+            }
+        }, false);
+
         document.getElementById("wallet-lookup-input").addEventListener("input", function() {
             const text = document.getElementById("wallet-lookup-input").innerText;
 
@@ -527,7 +614,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             window.location.href = window.location.href.split('?')[0];
         });
 
-        document.getElementById('day-night-toggle').addEventListener('click', function (e) {
+        var toggleNightMode = function (e) {
             if ((document.body.getAttribute('class') || '').indexOf('night') === -1) {
                 setNightMode(true);
             } else {
@@ -537,7 +624,10 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             e.preventDefault();
 
             return false;
-        });
+        };
+
+        document.getElementById('day-night-toggle').addEventListener('click', toggleNightMode);
+        // document.getElementById('day-night-toggle-mobile').addEventListener('click', toggleNightMode);
 
         document.getElementById('sync').addEventListener('click', function (e) {
             if (!state.wallet.address && !state.isSyncingWallet) {
@@ -657,10 +747,10 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             // window.open(objkt.gatewayUri,'winname','directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
         });
 
-        const resource = document.createElement('div');
+        // const resource = document.createElement('div');
 
-        resource.style.backgroundImage = 'url(' + objkt.displayImgUri + ')';
-        resource.classList.add('resource');
+        // resource.style.backgroundImage = 'url(' + objkt.displayImgUri + ')';
+        // resource.classList.add('resource');
 
         const metadata = document.createElement('div');
 
@@ -672,7 +762,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         artist.setAttribute('href', objkt.platformIssuerUri);
         artist.setAttribute('target', 'blank');
 
-        artist.innerText = 'by ' + objkt.issuer.handle;
+        artist.innerText = objkt.issuer.handle;
 
         const title = document.createElement('a');
 
@@ -718,86 +808,130 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             openGalleryMenu(objkt);
         });
 
+        var img = document.createElement('img');
+
+        img.classList.add('preview-img');
+        img.setAttribute('src', objkt.displayImgUri);
+
         metadata.appendChild(title);
         metadata.appendChild(document.createElement('br'));
         metadata.appendChild(artist);
-        metadata.appendChild(document.createElement('br'));
-        metadata.appendChild(document.createElement('br'));
-        metadata.appendChild(objktComLink);
-        metadata.appendChild(gatewayLink);
-        metadata.appendChild(ipfsLink);
-        preview.appendChild(resource);
-    
+        // metadata.appendChild(document.createElement('br'));
+        // metadata.appendChild(document.createElement('br'));
+        // metadata.appendChild(objktComLink);
+        // metadata.appendChild(gatewayLink);
+        // metadata.appendChild(ipfsLink);
+        // preview.appendChild(resource);
+        preview.appendChild(img);
+        
         if (!state.wallet.anonymous) {
-            metadata.appendChild(objktGallerySettings);
+            // metadata.appendChild(objktGallerySettings);
         }
     
         container.appendChild(preview);
         container.appendChild(metadata);
 
-        return container;  
+        var wrapper = document.createElement('div');
+
+        wrapper.classList.add('objkt-outer-wrapper');
+
+        var table = document.createElement('div');
+
+        table.classList.add('objkt-wrapper-table');
+
+        var tableCell = document.createElement('div');
+
+        tableCell.classList.add('objkt-wrapper-table-cell');
+
+        tableCell.appendChild(container);
+        table.appendChild(tableCell);
+        wrapper.appendChild(table);
+
+        wrapper.classList.add('placeholder-aspect');
+        img.onload = function () {
+            wrapper.classList.remove('placeholder-aspect');
+            console.log(img.naturalHeight, img.naturalWidth)
+
+            if (img.naturalHeight === img.naturalWidth) {
+                preview.classList.add('square-aspect');
+                container.classList.add('square-aspect');
+                wrapper.classList.add('square-aspect');
+            } else if (img.naturalHeight < img.naturalWidth) {
+                if (img.naturalWidth - (img.naturalWidth - img.naturalHeight) >= img.naturalWidth * .9) {
+                    preview.classList.add('square-aspect');
+                    container.classList.add('square-aspect');
+                    wrapper.classList.add('square-aspect');
+                } else {
+                    preview.classList.add('landscape-aspect');
+                    container.classList.add('landscape-aspect');
+                    wrapper.classList.add('landscape-aspect');
+                }
+            } else {
+                preview.classList.add('portrait-aspect');
+                container.classList.add('portrait-aspect');
+                wrapper.classList.add('portrait-aspect');
+            }
+        };
+
+        return wrapper;  
     }
 
-    // TODO you need to check marketplace totals and see if you even CAN get more given a page #
-    function loadWalletTokens(address, galleryMap) {
-        // TODO skip count per smart contractperPage
-        // var skipCount = state.page ? state.page * state.itemsPerPage : 0;
-        var perPage = Math.floor(state.itemsPerPage * 1.5);
-        var promises = [];
-    
-        var henIdList = galleryMap && galleryMap.hic;
-        var henConstraint = '';
-        var henShouldQuery = true;
+    function loadHicTokens(address, galleryMap, perPage) {
+        var idList = galleryMap && galleryMap.hic;
+        var constraint = '';
+        var shouldQuery = true;
 
-        if (Array.isArray(henIdList) && henIdList.length) {
+        if (Array.isArray(idList) && idList.length) {
             /**
              * The hic indexer allows us to query by ID + wallet holder, so we can search for gallery objkts directly.
              */
-            henConstraint = ', _or: [';
+            constraint = ', _or: [';
 
-            for (let i = 0; i < henIdList.length; i++) {
-                henConstraint += '{token_id: {_eq: ' + henIdList[i] + '}}';
+            for (let i = 0; i < idList.length; i++) {
+                constraint += '{token_id: {_eq: ' + idList[i] + '}}';
 
-                if (i < henIdList.length -1) {
-                    henConstraint += ',';
+                if (i < idList.length -1) {
+                    constraint += ',';
                 }
             }
 
-            henConstraint += ']';
-        } else if (Array.isArray(henIdList)) {
-            henShouldQuery = false;
+            constraint += ']';
+        } else if (Array.isArray(idList)) {
+            shouldQuery = false;
         }
 
-        promises.push(!henShouldQuery ? Promise.resolve(null) : fetch('https://hdapi.teztools.io/v1/graphql', {
+        return !shouldQuery ? Promise.resolve(null) : fetch('https://hdapi.teztools.io/v1/graphql', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                query: "\nquery collectorGallery($address: String!) {\n  hic_et_nunc_token_holder(limit: " + perPage + ", offset: " + state.skipCounts.hic + ", where: {holder_id: {_eq: $address}, token: {creator: {address: {_neq: $address}}}, quantity: {_gt: \"0\"} " + henConstraint + "}, order_by: {token_id: desc}) {\n    token {\n      id\n      artifact_uri\n      display_uri\n      thumbnail_uri\n      timestamp\n      mime\n      title\n      description\n      supply\n      royalties\n      creator {\n        address\n        name\n      }\n    }\n  }\n}\n",
+                query: "\nquery collectorGallery($address: String!) {\n  hic_et_nunc_token_holder(limit: " + perPage + ", offset: " + state.skipCounts.hic + ", where: {holder_id: {_eq: $address}, token: {creator: {address: {_neq: $address}}}, quantity: {_gt: \"0\"} " + constraint + "}, order_by: {token_id: desc}) {\n    token {\n      id\n      artifact_uri\n      display_uri\n      thumbnail_uri\n      timestamp\n      mime\n      title\n      description\n      supply\n      royalties\n      creator {\n        address\n        name\n      }\n    }\n  }\n}\n",
                 variables: {
                     address: address,
                 },
                 operationName: 'collectorGallery'
             })
-        }));
+        });
+    }
 
-        var fxhashIdList = galleryMap && galleryMap.fxhash;
-        var fxhashConstraint = '(take: ' + perPage + ', skip: ' + state.skipCounts.fxhash + ')';
-        var fxhashShouldQuery = true;
+    function loadFxhashTokens(address, galleryMap, perPage) {
+        var idList = galleryMap && galleryMap.fxhash;
+        var constraint = '(take: ' + perPage + ', skip: ' + state.skipCounts.fxhash + ')';
+        var shouldQuery = true;
 
-        if (Array.isArray(fxhashIdList) && fxhashIdList.length) {
+        if (Array.isArray(idList) && idList.length) {
             /**
              * The fxhash indexer does not have pagination, and querying by objkt id and retrieving
              * owners, so if we are looking for specific objkts (for gallery) we need the entire list.
              */
 
-            fxhashConstraint = '';
-        } else if (Array.isArray(fxhashIdList)) {
-            fxhashShouldQuery = false;
+            constraint = '';
+        } else if (Array.isArray(idList)) {
+            shouldQuery = false;
         }
 
-        promises.push(!fxhashShouldQuery ? Promise.resolve(null) : fetch('https://api.fxhash.xyz/graphql', {
+        return !shouldQuery ? Promise.resolve(null) : fetch('https://api.fxhash.xyz/graphql', {
             method : "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -807,13 +941,56 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 "variables": {
                     "id": address,
                 },
-                "query": "query Query($id: String!) {\n  user(id: $id) {\n    id\n    objkts" + fxhashConstraint + " {\n      id\n      assigned\n      iteration\n      owner {\n        id\n        name\n        flag\n        avatarUri\n        __typename\n      }\n      issuer {\n        name\n        flag\n        author {\n          id\n          name\n          flag\n          avatarUri\n          __typename\n        }\n        __typename\n      }\n      name\n      metadata\n      createdAt\n      offer {\n        id\n        price\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
+                "query": "query Query($id: String!) {\n  user(id: $id) {\n    id\n    objkts" + constraint + " {\n      id\n      assigned\n      iteration\n      owner {\n        id\n        name\n        flag\n        avatarUri\n        __typename\n      }\n      issuer {\n        name\n        flag\n        author {\n          id\n          name\n          flag\n          avatarUri\n          __typename\n        }\n        __typename\n      }\n      name\n      metadata\n      createdAt\n      offer {\n        id\n        price\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
             }),
-        }));
+        });
+    }
+
+    function loadObjktComTokens(address, galleryMap, perPage) {
+        var idList = galleryMap && galleryMap.objktcom;
+        var skipConstraint = 'limit: ' + perPage + ', offset: ' +  state.skipCounts.objktcom + ',';
+        var shouldQuery = true;
+        var idConstraint = '';
+
+        if (Array.isArray(idList) && idList.length) {
+            var idArr = idList.map((meta) => {
+                var seg = meta.split('|');
+
+                return '{token: {id: {_eq: "' + seg[0] + '"}, fa2: {contract: {_eq: "' + seg[1] + '"}}}}';
+            });
+
+            idConstraint = '{_or: [' + idArr.join(',') + ']},';
+
+        } else if (Array.isArray(idList)) {
+            shouldQuery = false;
+        }
+
+        return !shouldQuery ? Promise.resolve(null) : fetch('https://data.objkt.com/v1/graphql', {
+            method : "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: 'query GetObjktComTokens {token(order_by: {timestamp: desc},' + skipConstraint + ' where: {token_holders: {quantity: {_gt: 0}, holder: {address: {_eq: "' + address + '"}}, _and: [' + idConstraint + '{token: {fa2: {contract: {_neq: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"}}}}, {token: {fa2: {contract: {_neq: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"}}}}]}}) {id,fa2 {,contract,collection_id},timestamp,title,creator {,address,alias},mime,description,display_uri,artifact_uri,thumbnail_uri}}'
+            }),
+        });
+    }
+
+    // TODO you need to check marketplace totals and see if you even CAN get more given a page #
+    function loadWalletTokens(address, galleryMap) {
+        console.log(galleryMap)
+        // TODO skip count per smart contractperPage
+        // var skipCount = state.page ? state.page * state.itemsPerPage : 0;
+        var perPage = Math.floor(state.itemsPerPage * 1.5);
+        var promises = [];
+    
+        promises.push(loadHicTokens(address, galleryMap, perPage));
+        promises.push(loadFxhashTokens(address, galleryMap, perPage));
+        promises.push(loadObjktComTokens(address, galleryMap, perPage));
 
         return Promise.all(promises)
         .then((res) => Promise.all(res.map((d) => !d ? d : d.json())))
-        .then(([hic, fxhash]) => {
+        .then(([hic, fxhash, objktcom]) => {
             /**
              * Our fxhash indexer does not support querying by id, so if we are in gallery
              * view we need to search through all objkts to find the correct ones.
@@ -825,6 +1002,8 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 && galleryMap.fxhash.length
                 && (fxhash && fxhash.data && fxhash.data.user && fxhash.data.user.objkts && fxhash.data.user.objkts.length)) {
                 fxhash.data.user.objkts = fxhash.data.user.objkts.filter(function(o) {
+                    var fxhashIdList = galleryMap && galleryMap.fxhash;
+
                     return fxhashIdList.indexOf(o.id) !== -1;
                 });
 
@@ -908,6 +1087,46 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                     resourceIpfsHash: o.metadata.artifactUri.substr(7),
                     type: 'web',
                 })),
+                objktcom: !objktcom
+                || !objktcom.data
+                || !objktcom.data.token
+                ? [] : objktcom.data.token.map((o) => {
+                    var mimeBase = o.mime.split('/')[0];
+
+                    if (mimeBase === 'image' || mimeBase === 'model') {
+                        ipfsGatewayHost = 'https://cloudflare-ipfs.com/ipfs/';
+                    } else {
+                        ipfsGatewayHost = 'https://gateway.pinata.cloud/ipfs/';
+                    }
+
+                    tokenType = mimeBase === 'image' && 'image'
+                        || mimeBase === 'video' && 'video'
+                        || mimeBase === 'model' && 'model'
+                        || 'web';
+
+                    return {
+                        count: null,
+                        createdAt: o.timestamp,
+                        description: o.description,
+                        displayImgIpfsHash: o.display_uri.substr(7),
+                        displayImgUri: 'https://cloudflare-ipfs.com/ipfs/' + o.display_uri.substr(7),
+                        gatewayUri: 'https://gateway.fxhash.xyz/ipfs/' + o.artifact_uri.substr(7), 
+                        identifier: o.id + '|' + o.fa2.contract,
+                        ipfsLink: o.artifact_uri,
+                        issuer: {
+                            address: o.creator.address,
+                            avatarIpfsHash: null,
+                            handle: o.creator.alias || truncateAddress(o.creator.address),
+                            platform: 'OBJKTCOM',
+                        },
+                        name: o.title,
+                        objktComLink: 'https://objkt.com/asset/' + o.fa2.contract + '/' + o.id,
+                        platformUri: 'https://objkt.com/asset/' + o.fa2.contract + '/' + o.id,
+                        platformIssuerUri: 'https://objkt.com/profile/' + o.creator.address + '/created',
+                        resourceIpfsHash: o.artifact_uri.substr(7),
+                        type: tokenType,
+                    };
+                }),
             };
         })
         .then((collectionMap) => {
@@ -987,7 +1206,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
     }
 
     function openGalleryMenu(objkt) {
-        document.getElementById('gallery-list-container').classList.remove('hidden');
+        document.getElementById('pop-up-container').classList.remove('hidden');
         renderGalleryList(objkt);
     }
 
@@ -1047,18 +1266,64 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         document.getElementById('page-control-nav').classList.add('hidden');
     }
 
+    function setPopUpHeaderContent(str) {
+        document.getElementById('pop-up-header-content').innerText = str;
+    }
+
+    function openSettingsMenu() {
+        document.getElementById('pop-up-container').classList.remove('hidden');
+
+        var settingsContainer = document.getElementById('settings-content-container');
+
+        console.log('session', state.session)
+        document.getElementById('settings-export-text').innerText = BlockTEACrypto.encrypt(JSON.stringify(state.session), BLOCK_TEA_PASSPHRASE);
+        setPopUpHeaderContent('Your Settings');
+        // renderSettingsMenu();
+        settingsContainer.classList.remove('hidden');
+    }
+
+    // function renderSettingsMenu() {
+    //     // var settingsContent = document.getElementById('settings-content-container');
+    //     // var settings = {
+    //     //     import: {
+    //     //         html: '',
+    //     //         handler: function() {
+
+    //     //         },
+    //     //     },
+    //     // };
+
+
+    // }
+
     function renderGalleryList(objkt) {
+        if (objkt) {
+            setPopUpHeaderContent('Gallery Membership');
+            document.getElementById('new-gallery-input').classList.add('hidden');
+            document.getElementById('new-gallery-submit').classList.add('hidden');
+        } else {
+            setPopUpHeaderContent('Manage Galleries');
+            document.getElementById('new-gallery-input').classList.remove('hidden');
+            document.getElementById('new-gallery-submit').classList.remove('hidden');
+        }
+
         var galleryList = document.getElementById('gallery-link-container');
+
+        document.getElementById('gallery-link-content').classList.remove('hidden');
 
         galleryList.innerHTML = '';
 
         var galleryKeys = Object.keys(state.session.galleryMap);
+        console.log(state.session.galleryMap)
+        galleryKeys = galleryKeys.sort(function (a, b) {
+            return state.session.galleryMap[a].displayName.charCodeAt(0) - state.session.galleryMap[b].displayName.charCodeAt(0);
+        });
 
         for (let i = 0; i < galleryKeys.length; i++) {
             var gallery = state.session.galleryMap[galleryKeys[i]];
             var el = document.createElement('div');
 
-            el.classList.add('gallery-link-container');
+            el.classList.add('gallery-link-wrapper')
 
             var containerKey = 'gallery-link-' + galleryKeys[i];
 
@@ -1070,7 +1335,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             removeLink.setAttribute('href', '#');
             removeLink.setAttribute('data-gallery-key', galleryKeys[i]);
 
-            removeLink.innerText = '🗑️';
+            removeLink.innerText = '[DEL]';
 
             removeLink.addEventListener('click', function() {
                 delete state.session.galleryMap[galleryKeys[i]];
@@ -1096,6 +1361,9 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             } else {
                 var gallerySettings = state.session.galleryMap[galleryKeys[i]];
                 var issuer = objkt.issuer.platform.toLowerCase();
+
+                gallerySettings[issuer] = gallerySettings[issuer] || [];
+
                 var galleryIndex = gallerySettings[issuer].indexOf(objkt.identifier);
 
                 if (galleryIndex !== -1) {
@@ -1105,7 +1373,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                     removeFromGalleryLink.setAttribute('href', '#');
                     removeFromGalleryLink.setAttribute('data-gallery-key', galleryKeys[i]);
         
-                    removeFromGalleryLink.innerText = '⭕';
+                    removeFromGalleryLink.innerText = '[RMV]';
         
                     removeFromGalleryLink.addEventListener('click', function(evt) {
                         state.session.galleryMap[galleryKeys[i]][issuer].splice(galleryIndex, 1);
@@ -1118,17 +1386,17 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 } else {
                     var addToGalleryLink = document.createElement('a');
 
-                    addToGalleryLink.classList.add('remove-from-gallery');
+                    addToGalleryLink.classList.add('add-to-gallery');
                     addToGalleryLink.setAttribute('href', '#');
                     addToGalleryLink.setAttribute('data-gallery-key', galleryKeys[i]);
         
-                    addToGalleryLink.innerText = '✅';
+                    addToGalleryLink.innerText = '[ADD]';
         
                     addToGalleryLink.addEventListener('click', function(evt) {
                         state.session.galleryMap[galleryKeys[i]][issuer].push(objkt.identifier);
                         storeSession();
                         renderGalleryList(objkt);
-                        document.getElementById('gallery-list-container').classList.add('hidden');
+                        document.getElementById('pop-up-container').classList.add('hidden');
                         evt.preventDefault();
                     });
 
