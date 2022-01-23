@@ -971,7 +971,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                query: 'query GetObjktComTokens {token(order_by: {timestamp: desc},' + skipConstraint + ' where: {token_holders: {quantity: {_gt: 0}, holder: {address: {_eq: "' + address + '"}}, _and: [' + idConstraint + '{token: {fa2: {contract: {_neq: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"}}}}, {token: {fa2: {contract: {_neq: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"}}}}]}}) {id,fa2 {,contract,collection_id},timestamp,title,creator {,address,alias},mime,description,display_uri,artifact_uri,thumbnail_uri}}'
+                query: 'query GetObjktComTokens {token(order_by: {timestamp: desc},' + skipConstraint + ' where: {token_holders: {quantity: {_gt: 0}, holder: {address: {_eq: "' + address + '"}}, _and: [' + idConstraint + '{token: {fa2: {contract: {_neq: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"}}}}, {token: {fa2: {contract: {_neq: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"}}}}]}}) {id,fa2 {name,contract,collection_id},timestamp,title,creator {tzdomain,address,alias},mime,description,display_uri,artifact_uri,thumbnail_uri}}'
             }),
         });
     }
@@ -1116,7 +1116,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                         issuer: {
                             address: o.creator.address,
                             avatarIpfsHash: null,
-                            handle: o.creator.alias || truncateAddress(o.creator.address),
+                            handle: o.creator.alias || o.fa2.name || truncateAddress(o.creator.address),
                             platform: 'OBJKTCOM',
                         },
                         name: o.title,
