@@ -377,10 +377,14 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         document.getElementById('settings-content-container').classList.add('hidden');
     }
 
+    function closeSidebar() {
+        document.getElementById('sidebar-container').classList.add('hidden');
+    }
+
     function attachHandlers() {
         document.addEventListener('keydown', function(evt) {
             if (evt.code && evt.code === 'Escape' || evt.keyCode && evt.keyCode === 27) {
-                document.getElementById('sidebar').classList.add('hidden');
+                closeSidebar();
                 closePopUp();
             }        
         });
@@ -389,18 +393,19 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         for (var i = 0; i < sidebarLinks.length; i++) {
             sidebarLinks[i].addEventListener('click', function() {
-                document.getElementById('sidebar').classList.add('hidden');
+                closeSidebar();
             }, false);
         }
 
-        document.getElementById('sidebar-toggle').addEventListener('click', function() {
-            var sidebar = document.getElementById('sidebar');
-            var classArr = Array.prototype.slice.call(sidebar.classList);
+        document.getElementById('sidebar-container').addEventListener('click', closeSidebar);
+        document.getElementById('sidebar-toggle').addEventListener('click', function(evt) {
+            var sidebarContainer = document.getElementById('sidebar-container');
+            var classArr = Array.prototype.slice.call(sidebarContainer.classList);
 
             if (classArr.indexOf('hidden') === -1) {
-                sidebar.classList.add('hidden');
+                sidebarContainer.classList.add('hidden');
             } else {
-                sidebar.classList.remove('hidden');
+                sidebarContainer.classList.remove('hidden');
             }
         });
 
@@ -731,8 +736,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         const preview = document.createElement('div');
 
-        preview.classList.add('preview');
-        preview.addEventListener('click', function () {
+        var openPopOutViewer = function () {
             var bgColor = state.session.viewerBgColor;
             var uri = window.location.href.split('?')[0].replace('#', '')
                 + '?ipfs=' + encodeURIComponent(objkt.gatewayUri)
@@ -745,7 +749,10 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             var windowSettings = 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no';
             window.open(uri ,Date.now().toString(), windowSettings);
             // window.open(objkt.gatewayUri,'winname','directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
-        });
+        };
+        
+        preview.classList.add('preview');
+        preview.addEventListener('click', openPopOutViewer);
 
         // const resource = document.createElement('div');
 
@@ -767,7 +774,13 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         const title = document.createElement('a');
 
         title.classList.add('title');
-        title.setAttribute('href', objkt.platformUri);
+        title.setAttribute('href', '#');
+
+        title.addEventListener('click', function(evt) {
+            evt.preventDefault();
+            openPopOutViewer();
+        });
+
         title.setAttribute('target', 'blank');
 
         title.innerText = objkt.name;
@@ -978,7 +991,6 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
     // TODO you need to check marketplace totals and see if you even CAN get more given a page #
     function loadWalletTokens(address, galleryMap) {
-        console.log(galleryMap)
         // TODO skip count per smart contractperPage
         // var skipCount = state.page ? state.page * state.itemsPerPage : 0;
         var perPage = Math.floor(state.itemsPerPage * 1.5);

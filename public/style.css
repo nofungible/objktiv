@@ -137,6 +137,15 @@ body.night #header {
 	width: 100%;
 } */
 
+#sidebar-container {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0; 
+	z-index: 998;
+}
+
 #sidebar-toggle {
 	position: absolute;
 	right: 7px;
