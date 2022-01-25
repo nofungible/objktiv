@@ -5,11 +5,11 @@ https://mikesizz.github.io/objktiv-alpha/
 
 ## About
 ### Functionality
-This dApp allows you to view Tezos based NFTs minted on the hic et nunc and fxhash smart contracts. Additional smart contract support will be coming soon.
+This dApp allows you to view Tezos based NFTs minted on the hic et nunc, fxhash and objkt.com smart contracts. Additional smart contract support will be coming soon.
 
-The alpha version includes wallet sync'ing, anonymous wallet viewing, gallery creation, popout objkt viewer w/ bg color selector, and day/night mode.
+The alpha version includes wallet sync'ing, anonymous wallet viewing, gallery creation, popout objkt viewer, day/night mode, and tons more.
 
-All settings are persisted via local storage, so settings will not carry over between devices. Settings export will come shortly.
+All settings are persisted via local storage, so settings will not carry over between devices. Settings export is provided in the dApp via the 'settings' link in the pullout navigation.
 
 ### Decentralization
 The goal is to stand OBJKTIV up as a fully decentralized application, though centralized indexers are used as a dependency in its current incarnation. With this in mind, most views, galleries, objkts, etc can be shared via URL. Ideally, everything that dictates your viewing experience will be encoded in the URL making it is 100% shareable.
