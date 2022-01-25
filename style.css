@@ -1453,7 +1453,10 @@ body.night #next-page-control-flare {
 		width: 375px;
 	}
 
-	.objkt-outer-wrapper.landscape-aspect .objkt-metadata,
+	.objkt-outer-wrapper.landscape-aspect .objkt-metadata {
+		width: 375px !important;
+	}
+
 	.objkt-outer-wrapper.landscape-aspect .preview-img {
 		width: 375px !important;
 		overflow: hidden;
@@ -1461,7 +1464,6 @@ body.night #next-page-control-flare {
 
 	.objkt-container.portrait-aspect .objkt-metadata {
 		max-width: 275px;
-		overflow: hidden;
 	}
 
 	.objkt-container .preview.portrait-aspect {
