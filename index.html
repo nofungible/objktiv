@@ -10,11 +10,17 @@
 <body>
   <div id="content">
     <div id="header-cta" class="hidden">
-      <span>⚠️ Viewing anonymously! <a href="#" id="exit-anon">Exit</a> and sync to view wallet. ⚠️</span>
+      <span>Viewing anonymously! <a href="#" id="exit-anon">Exit</a> and sync.</span>
     </div>
     <div id="header">
+      <div id="sidebar-toggle">
+        <div class="sidebar-toggle-icon"></div>
+        <div class="sidebar-toggle-icon"></div>
+        <div class="sidebar-toggle-icon"></div>
+      </div>
       <div class="border-box"></div>
-      <pre id="title">
+      <p id="title">OBJKTIV >_ Tezos NFT Viewer</p>
+      <!-- <pre id="title">
 ░█████╗░██████╗░░░░░░██╗██╗░░██╗████████╗██╗██╗░░░██╗
 ██╔══██╗██╔══██╗░░░░░██║██║░██╔╝╚══██╔══╝██║██║░░░██║
 ██║░░██║██████╦╝░░░░░██║█████═╝░░░░██║░░░██║╚██╗░██╔╝
@@ -28,6 +34,19 @@
 ─░█── █▀▀ ▄▀─ █──█ ▀▀█ 　 ░█░█░█ ░█▀▀▀ ─░█── 　 ─█▄█─ ▀█▀ █▀▀ █▄█▄█ █▀▀ █▄▄▀
 ─░█── ▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀ 　 ░█──▀█ ░█─── ─░█── 　 ──▀── ▀▀▀ ▀▀▀ ─▀─▀─ ▀▀▀ ▀─▀▀
         </pre>
+      </div> -->
+    </div>
+    <div id="sidebar-container" class="hidden">
+      <div id="sidebar">
+        <span id="version-string">v0.2.0</span>
+        <a id="home-link" class="sidebar-link" href="/">home</a>
+        <a id="sync" class="sidebar-link" href="#">sync</a>
+        <div id="wallet-nav" class="hidden">
+          <a id="galleries-link" class="sidebar-link" href="#">gallery</a>
+          <a id="settings-link" class="sidebar-link" href="#">settings</a>
+        </div>
+        <a id="about" class="sidebar-link" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">about</a>
+        <a id="day-night-toggle" class="sidebar-link" href="#">day/night</a>
       </div>
     </div>
     <div id="nav">
@@ -35,30 +54,50 @@
         <div id="wallet-lookup-submit">View Wallet</div>
         <div id="wallet-lookup-input" contenteditable wrap='off'></div>
       </div>
-      <br id="wallet-lookup-break"/>
+      <!-- <br id="wallet-lookup-break"/>
       <a id="sync" href="#">sync</a>
-      <a id="about" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">❓</a>
-      <a id="day-night-toggle" href="#">☀️/🌙</a>
+      <a id="about" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">about</a>
       <span id="wallet-nav" class="hidden">
-        <a id="galleries-link" href="#">🖼️</a>
-      </span>
-      <div id="page-control-nav" class="hidden">
+        <a id="galleries-link" href="#">gallery</a>
+        <a id="settings-link" href="#">settings</a>
+      </span> -->
+      <div id="page-control-nav" class="">
         <span>Per Page:&nbsp;</span>
-        <span id="decrease-items-per-page">⏪</span>
+        <span id="decrease-items-per-page"><<</span>
         <span id="items-per-page">10</span>
-        <span id="increase-items-per-page">⏩</span>
+        <span id="increase-items-per-page">>></span>
       </div>
     </div>
-    <div id="gallery-list-container" class="hidden">
-      <div id="gallery-list-wrapper">
-        <div id="gallery-list">
-          <div id="gallery-list-header">
+    <div id="pop-up-container" class="hidden">
+      <div id="pop-up-wrapper">
+        <div id="pop-up-exit-overlay"></div>
+        <div id="pop-up">
+          <div id="pop-up-header">
             <div class="border-box"></div>
-            <div id="gallery-list-exit">❌</div>
-            <p>Your Galleries</p>
+            <div id="pop-up-exit">X</div>
+            <p id="pop-up-header-content">Your Galleries</p>
           </div>
-          <span id="new-gallery-submit">+</span><div id="new-gallery-input" contenteditable wrap='off'></div>
-          <div id="gallery-link-container"></div>
+          <div id="gallery-link-content" class="pop-up-content hidden">
+            <span id="new-gallery-submit">+</span><div id="new-gallery-input" contenteditable wrap='off'></div>
+            <div id="no-gallery-message-container">
+              <p id="no-gallery-message">No galleries.<br><br>Create one<br>via <a id="main-menu-link" href="#">gallery menu</a>.</p>
+            </div>
+            <div id="gallery-link-container"></div>
+          </div>
+          <div id="settings-content-container" class="pop-up-content hidden">
+            <div class="settings-nav-item">
+              <div id="settings-import-container">
+                <div id="settings-import-input" contenteditable wrap='off'></div>
+                <div id="settings-import-submit" class="button disabled">Import Settings</div>
+              </div>
+            </div>
+            <div class="settings-nav-item">
+              <div id="settings-export-container">
+                <p id="settings-export-text"></p>
+                <div id="settings-export-submit" class="button">Export Settings</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -71,22 +110,24 @@
           <span id="objkt-name"></span>
           <span id="artist-name"></span>
         </div>
-        <div id="bg-color-picker">
-          <div id="bg-color-picker-menu" class="hidden"></div>
-          <div id="selected-bg-color"></div>
-        </div>
-        <div id="hex-color-picker-container" class="hidden">
-          <div contenteditable="true" id="hex-color-picker" wrap='off'></div>
-          <span id="hex-color-picker-submit">+</span>
+        <div id="viewer-color-picker-nav">
+          <div id="bg-color-picker">
+            <div id="bg-color-picker-menu" class="hidden"></div>
+            <div id="selected-bg-color"></div>
+          </div>
+          <div id="hex-color-picker-container" class="hidden">
+            <div contenteditable="true" id="hex-color-picker" wrap='off'><span id="hex-input-placeholder">#hexcode</span></div>
+            <span id="hex-color-picker-submit">+</span>
+          </div>
         </div>
       </div>
     </div>
     <div id="next-page-controls" class="hidden">
-      <a id="previous-page" class="previous-page-button" href="#">⏪ Previous Page</a>
-      <a id="previous-page-mobile" class="previous-page-button" href="#">⏪ Page</a>
-      <span id="next-page-control-flare">💀</span>
-      <a id="next-page" class="next-page-button" href="#">Next Page ⏩</a>
-      <a id="next-page-mobile" class="next-page-button" href="#">Page ⏩</a>
+      <a id="previous-page" class="previous-page-button" href="#"><< Prev. Page</a>
+      <a id="previous-page-mobile" class="previous-page-button" href="#"><< Page</a>
+      <span id="next-page-control-flare">♡</span>
+      <a id="next-page" class="next-page-button" href="#">Next Page >></a>
+      <a id="next-page-mobile" class="next-page-button" href="#">Page >></a>
     </div>
     <div id="footer-push">
     </div>
