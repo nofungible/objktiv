@@ -1,7 +1,7 @@
 # OBJKTIV: Tezos NFT Viewer
 ⚠️ Heads Up! You are viewing an early release version. This dApp is not fully bug tested! ⚠️
 
-https://mikesizz.github.io/objktiv-alpha/
+https://objktiv.nofungible.cloud/
 
 ## About
 ### Functionality
