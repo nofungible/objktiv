@@ -1,102 +1,61 @@
+'use strict';
+
+/**
+ * Block TEA crypto algorithm. Used to encrypt/decrypt user settings ciphertext.
+ * https://www.movable-type.co.uk/scripts/tea-block.html
+ */
+
+!function(){function r(r,e){if(r=String(r),e=String(e),0==r.length)return"";var t=o(i(r)),u=o(i(e).slice(0,16)),c=n(t,u),d=f(c),h=a(d);return h}function e(r,e){if(r=String(r),e=String(e),0==r.length)return"";var n=o(c(r)),a=o(i(e).slice(0,16)),d=t(n,a),h=f(d),l=u(h.replace(/\0+$/,""));return l}function n(r,e){r.length<2&&(r[1]=0);for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=0;i-->0;){c+=f,t=c>>>2&3;for(var d=0;o>d;d++)a=r[(d+1)%o],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),u=r[d]+=n}return r}function t(r,e){for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=i*f;0!=c;){t=c>>>2&3;for(var d=o-1;d>=0;d--)u=r[d>0?d-1:o-1],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),a=r[d]-=n;c-=f}return r}function o(r){for(var e=new Array(Math.ceil(r.length/4)),n=0;n<e.length;n++)e[n]=r.charCodeAt(4*n)+(r.charCodeAt(4*n+1)<<8)+(r.charCodeAt(4*n+2)<<16)+(r.charCodeAt(4*n+3)<<24);return e}function f(r){for(var e="",n=0;n<r.length;n++)e+=String.fromCharCode(255&r[n],r[n]>>>8&255,r[n]>>>16&255,r[n]>>>24&255);return e}function i(r){return unescape(encodeURIComponent(r))}function u(r){try{return decodeURIComponent(escape(r))}catch(e){return r}}function a(r){if("undefined"!=typeof btoa)return btoa(r);if("undefined"!=typeof Buffer)return new Buffer(r,"binary").toString("base64");throw new Error("No Base64 Encode")}function c(r){if("undefined"==typeof atob&&"undefined"==typeof Buffer)throw new Error("No base64 decode");try{if("undefined"!=typeof atob)return atob(r);if("undefined"!=typeof Buffer)return new Buffer(r,"base64").toString("binary")}catch(e){throw new Error("Invalid ciphertext")}}window.BlockTEACrypto={encrypt:r,decrypt:e}}();
+
+/**
+ * OBJKTIV Tezos NFT Viewer
+ * https://github.com/nofungible/objktiv
+ */
+
 (function () {
-    // Block TEA crypto algo https://www.movable-type.co.uk/scripts/tea-block.html
-    !function(){function r(r,e){if(r=String(r),e=String(e),0==r.length)return"";var t=o(i(r)),u=o(i(e).slice(0,16)),c=n(t,u),d=f(c),h=a(d);return h}function e(r,e){if(r=String(r),e=String(e),0==r.length)return"";var n=o(c(r)),a=o(i(e).slice(0,16)),d=t(n,a),h=f(d),l=u(h.replace(/\0+$/,""));return l}function n(r,e){r.length<2&&(r[1]=0);for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=0;i-->0;){c+=f,t=c>>>2&3;for(var d=0;o>d;d++)a=r[(d+1)%o],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),u=r[d]+=n}return r}function t(r,e){for(var n,t,o=r.length,f=2654435769,i=Math.floor(6+52/o),u=r[o-1],a=r[0],c=i*f;0!=c;){t=c>>>2&3;for(var d=o-1;d>=0;d--)u=r[d>0?d-1:o-1],n=(u>>>5^a<<2)+(a>>>3^u<<4)^(c^a)+(e[3&d^t]^u),a=r[d]-=n;c-=f}return r}function o(r){for(var e=new Array(Math.ceil(r.length/4)),n=0;n<e.length;n++)e[n]=r.charCodeAt(4*n)+(r.charCodeAt(4*n+1)<<8)+(r.charCodeAt(4*n+2)<<16)+(r.charCodeAt(4*n+3)<<24);return e}function f(r){for(var e="",n=0;n<r.length;n++)e+=String.fromCharCode(255&r[n],r[n]>>>8&255,r[n]>>>16&255,r[n]>>>24&255);return e}function i(r){return unescape(encodeURIComponent(r))}function u(r){try{return decodeURIComponent(escape(r))}catch(e){return r}}function a(r){if("undefined"!=typeof btoa)return btoa(r);if("undefined"!=typeof Buffer)return new Buffer(r,"binary").toString("base64");throw new Error("No Base64 Encode")}function c(r){if("undefined"==typeof atob&&"undefined"==typeof Buffer)throw new Error("No base64 decode");try{if("undefined"!=typeof atob)return atob(r);if("undefined"!=typeof Buffer)return new Buffer(r,"base64").toString("binary")}catch(e){throw new Error("Invalid ciphertext")}}window.BlockTEACrypto={encrypt:r,decrypt:e}}();
+    /**
+     * Global Constants - Do not change these values.
+     */
 
     var BLOCK_TEA_PASSPHRASE = 'abc123';
-    var BlockTEACrypto = window.BlockTEACrypto;
+    var DEFAULT_BG_COLOR_OPTIONS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white'];
     var DEFAULT_PER_PAGE = 10;
     var DEFAULT_VIEWER_BG_COLOR = 'black';
     var SESSION_STORE_KEY = 'objktiv-session-store';
-    var DEFAULT_BG_COLOR_OPTIONS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white'];
-    var DEFAULT_SESSION = {
-        nightModeActive: false,
-        itemsPerPage: DEFAULT_PER_PAGE,
-        viewerBgColor: DEFAULT_VIEWER_BG_COLOR,
-        galleryIndex: 0,
-        galleryMap: {}
-    };
 
-    var DEFAULT_SESSION_STORE = {
-        default: JSON.parse(JSON.stringify(DEFAULT_SESSION)),
-    };
+    /**
+     * Global Variables
+     */
 
-    var sessionStore = window.localStorage.getItem(SESSION_STORE_KEY);
-    var globalWalletClient;
-
-    if (!sessionStore) {
-        var storeString = JSON.stringify(DEFAULT_SESSION_STORE);
-
-        window.localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(DEFAULT_SESSION_STORE));
-
-        // Re parse JSON string to get cloned version.
-        sessionStore = JSON.parse(storeString);
-    } else {
-        sessionStore = JSON.parse(sessionStore);
-    }
-
-    var DEFAULT_STATE = {
-        wallet: {},
-        isSyncingWallet: true, // must be set to false by event handlers below for sync button to enable
-        isLastPage: false,
-        itemsPerPage: DEFAULT_PER_PAGE,
-        skipCounts: {
-            hic: 0,
-            fxhash: 0,
-            objktcom: 0
-        },
-        pageSkips: [],
-        session: sessionStore.default,
-    };
-
-    var state = JSON.parse(JSON.stringify(DEFAULT_STATE));
     var BeaconWallet = beacon.DAppClient;
-    var beaconWalletClient;
+    var BlockTEACrypto = window.BlockTEACrypto;
 
+    // Load current session storage.
+    var sessionStore = initSessionStore();
+
+    // Set the default session as the current session since we haven't loaded any active wallets yet.
+    var state = initState(sessionStore.default);
+
+    /**
+     * Main logic
+     */
+
+    // Apply default/unlinked user settings.
     applySessionPreferences();
+
+    // Attach page event handlers.
     attachHandlers(); 
 
-    const urlSearchParamsObj = new URLSearchParams(window.location.search);
-    const urlQuerystrings = Object.fromEntries(urlSearchParamsObj.entries());
+    var globalWalletClient;
 
-    // Display viewer window
-    if (urlQuerystrings.ipfs) {
-        spawnWalletInstance(function(successful) {
-            if (!successful) {
-                return false;
-            }
+    /**
+     * Display objkt viewer if ipfs address is provided with page options
+     */
 
-            state.session = sessionStore[state.wallet.address] || state.session;
-
-            applySessionPreferences();
-
-            var selectedColor = state.session.viewerBgColor;
-
-            document.getElementById('selected-bg-color').style.background = selectedColor;
-            document.getElementById('viewer-window-content').style.background = selectedColor;
-        });
-
-        if (urlQuerystrings.title) {
-            console.log(urlQuerystrings.title)
-            document.title = urlQuerystrings.title;
-            document.getElementById('objkt-name').innerHTML = urlQuerystrings.title;
-        }
-
-        if (urlQuerystrings.issuer) {
-            document.getElementById('objkt-name').innerHTML = document.getElementById('objkt-name').innerHTML + '<br id="objkt-title-break"><span id="objkt-title-space">&nbsp;</span>by ' + urlQuerystrings.issuer;
-        }
-
-        if (urlQuerystrings.night) {
-            setNightMode(urlQuerystrings.night === 'true');
-        }
- 
-        var selectedColor = urlQuerystrings.bg || state.session.viewerBgColor;
-
-        document.getElementById('selected-bg-color').style.background = selectedColor;
-        document.getElementById('viewer-window-content').style.background = selectedColor;
-
-        for (let i = 0; i < DEFAULT_BG_COLOR_OPTIONS.length; i++) {
-            addViewerBackgroundColorOption(DEFAULT_BG_COLOR_OPTIONS[i]);
-        }
+    if (state.viewOptions.ipfs) {
+        /**
+         * Hide UI elements not required for objkt viewer.
+         */
 
         document.getElementById('nav').classList.add('hidden');
         document.getElementById('header').classList.add('hidden');
@@ -104,19 +63,69 @@
         document.getElementById('footer-push').classList.add('hidden');
         document.getElementById('viewer-window').classList.remove('hidden');
 
+        /**
+         * Set page title to objkt title
+         */
 
-        var url = urlQuerystrings.ipfs;
-        var contentType = urlQuerystrings.type;
-        var elementMap = {
-            image: '<div id="image-resource" style="background-image: url(' + url + ')"></div>',
-            video: '<video id="video-resource" autoplay loop controls muted><source src="' + url + '"></video>',
-            model: '<model-viewer id="model-resource" src="' + url + '" camera-controls ar ar-modes="webxr scene-viewer quick-look"></model-viewer>',
+        var objktTitle = state.viewOptions.title;
+
+        document.title = objktTitle;
+
+        /**
+         * Create wallet instance so we can apply user's preferences to objkt viewer
+         */
+
+        spawnWalletInstance(function(successful) {
+            if (!successful) {
+                // @TODO display some kind of error page
+                return false;
+            }
+
+            /**
+             * Gather the session that belongs to the sync'd wallet and apply session preferences.
+             */
+
+            if (sessionStore[state.wallet.address]) {
+                state.session = sessionStore[state.wallet.address];
+
+                applySessionPreferences();
+            }
+        });
+
+        // Set a special class for extra long objkt titles to help with setting additional custom styles.
+        var objktNameplateTitleClass =  objktTitle.length >= 45 ? 'extra-long-viewer-title' : '';
+
+        // Apply objkt title and issuer title to objkt viewer nameplate
+        document.getElementById('objkt-name').innerHTML = 
+            '<span id="objkt-name-title" class="' + objktNameplateTitleClass + '">' + state.viewOptions.title + '</span>'
+            + '<br>'
+            + '<span id="objkt-name-artist">' + state.viewOptions.issuer + '</span>';
+
+        // Add viewer bg color options to bg color picker menu
+        for (var i = 0; i < DEFAULT_BG_COLOR_OPTIONS.length; i++) {
+            addViewerBackgroundColorOption(DEFAULT_BG_COLOR_OPTIONS[i]);
+        }
+
+        /**
+         * Construct HTML embed elements for simple resource mime types.
+         */
+
+        var resourceIpfsAddress = state.viewOptions.ipfs;
+        var htmlEmbedElementMap = {
+            image: '<div id="image-resource" style="background-image: url(' + resourceIpfsAddress + ')"></div>',
+            video: '<video id="video-resource" autoplay loop controls muted><source src="' + resourceIpfsAddress + '"></video>',
+            model: '<model-viewer id="model-resource" src="' + resourceIpfsAddress + '" camera-controls ar ar-modes="webxr scene-viewer quick-look"></model-viewer>',
         };
 
-        var type = contentType.split('/')[0];
+        var mimeType = state.viewOptions.type;
+        var fileType = mimeType.split('/')[0];
 
-        if (elementMap[type]) {
-            document.getElementById('viewer-window-content').innerHTML = elementMap[type];
+        /**
+         * Embed simple HTML element or create, embed, and update src for iframe element.
+         */
+
+        if (htmlEmbedElementMap[fileType]) {
+            document.getElementById('viewer-window-content').innerHTML = htmlEmbedElementMap[fileType];
         } else {
             var iframeEl = document.createElement('iframe');
 
@@ -126,40 +135,82 @@
             iframeEl.setAttribute('src', url);
         }
 
+        /**
+         * Apply objkt viewer specific resize handler. We need to resize the viewer content to match the objkt title nameplate.
+         * This is due to the objkt nameplate being absolutely positioned.
+         */
+
+        var resizeViewerContentWindow = function() {
+            document.getElementById('viewer-window-content').style.height = (window.innerHeight - document.getElementById('viewer-window-content-nav').offsetHeight) + 'px';
+        };
+
+        resizeViewerContentWindow();
+        window.addEventListener('resize', resizeViewerContentWindow, true);
+
+        // Return to prevent additional page view rendering and exit further JavaScript evaluation.
         return true;
     }
 
-    if (urlQuerystrings.tz) {
-        state.wallet = {address: urlQuerystrings.tz, anonymous: true};
+    /**
+     * Display anonymous wallet view if wallet address was provided with page options.
+     */
+
+    if (state.viewOptions.tz) {
+        // Set the anonymous wallet address as the currently sync'd wallet and flag the wallet as anonymous
+        state.wallet = {address: state.viewOptions.tz, anonymous: true};
 
         var galleryJSON;
 
-        if (urlQuerystrings.gallery) {
-            galleryJSON = decodeURIComponent(urlQuerystrings.gallery);
+        /**
+         * Apply gallery options if provided with page options.
+         */
+
+        if (state.viewOptions.gallery) {
+            galleryJSON = decodeURIComponent(state.viewOptions.gallery);
 
             state.galleryJSON = galleryJSON = JSON.parse(galleryJSON);
         }
 
         spawnWalletInstance(function(successful) {
-            if (!successful || !urlQuerystrings.gallery || state.wallet.address !== urlQuerystrings.tz) {
-                state.wallet = {address: urlQuerystrings.tz, anonymous: true};
+            /**
+             * Display wallet or gallery and remove sync'd wallet UI if the target wallet is not the sync'd wallet.
+             */
+
+            if (!successful || state.wallet.address !== state.viewOptions.tz) {
+                // @TODO display error page if sync not successful
+                state.wallet = {address: state.viewOptions.tz, anonymous: true};
+
+                /**
+                 * Reveal anon wallet viewing CTA and hide UI elements reserved for sync'd wallet.
+                 */
 
                 document.getElementById('header-cta').classList.remove('hidden');
+                document.getElementById('sidebar').classList.add('extended-top');
+                document.getElementById('content').classList.add('anon-view');
                 document.getElementById('sync').classList.add('hidden');
                 document.getElementById('galleries-link').classList.add('hidden');
                 document.getElementById('wallet-lookup-container').classList.add('hidden');
-            } else {
+            } else if (successful && (!!state.viewOptions.gallery || !!state.viewOptions.i_tz)) {
+                // @TODO wouldn't we want to also apply session preferences regardless of this else if?
+                // shouldn't we want to 
                 state.session = sessionStore[state.wallet.address] || state.session;
 
                 applySessionPreferences();
                 enableSyncUI();
             }
 
-            populateCollection(galleryJSON).then(console.log, console.log);
+            var creatorAddress = state.viewOptions.i_tz;
+
+            populateCollection(galleryJSON, creatorAddress || null).then(console.log, console.log);
         });
     } else {
+        /**
+         * Display sync'd wallets collection.
+         */
+
         spawnWalletInstance(function(successful) {
             if (!successful) {
+                // @TODO show error page
                 return false;
             }
 
@@ -172,216 +223,48 @@
         });
     }
 
-    function spawnWalletInstance(cb) {
-        globalWalletClient = state.walletClient = new BeaconWallet({
-            name: 'OBJKTIV',
-            eventHandlers: {
-                ACTIVE_ACCOUNT_SET: {
-                    handler: function (account) {
-                        console.log('ACTIVE ACCOUNT SET', account)
-                        state.isSyncingWallet = false;
-
-                        if (!account || !account.address) {
-                            return cb(false);
-                        }
-
-                        state.wallet = account;
-
-                        cb(true);
-                    }
-                }
-            }
-        });
-
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACKNOWLEDGE_RECEIVED, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACTIVE_ACCOUNT_SET, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACTIVE_TRANSPORT_SET, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_ERROR, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_SENT, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_SUCCESS, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.CHANNEL_CLOSED, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.HIDE_UI, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.INTERNAL_ERROR, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.LOCAL_RATE_LIMIT_REACHED, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.NO_PERMISSIONS, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_ERROR, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_SENT, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_SUCCESS, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PAIR_INIT, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PAIR_SUCCESS, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_ERROR, () => {
-            console.log('permissions request aborted');
-            state.isSyncingWallet = false;
-        });
-globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SENT, () => {
-            console.log('permissions request aborted');
-            state.isSyncingWallet = false;
-        });
-globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCESS, () => {
-            console.log('permissions request aborted');
-            state.isSyncingWallet = false;
-        });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SHOW_PREPARE, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_ERROR, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_SENT, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_SUCCESS, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.UNKNOWN, () => {
-//             console.log('permissions request aborted');
-//             state.isSyncingWallet = false;
-//         });
-
-
-        globalWalletClient.subscribeToEvent(beacon.BeaconEvent.NO_PERMISSIONS, () => {
-            console.log('permissions request aborted');
-            state.isSyncingWallet = false;
-        });
-
-        globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SENT, () => {
-            console.log('permissions request aborted');
-            state.isSyncingWallet = false;
-        });
-    }
+    /**
+     * Functions
+     */
 
     function applySessionPreferences() {
-        if (state.session.nightModeActive) {
-            document.body.classList.add('night');
-            state.isNightModeActive = state.session.nightModeActive
-        }
+        /**
+         * Apply user's night mode preference.
+         */
     
-        if (state.session.itemsPerPage) {
-            document.getElementById('items-per-page').innerText = state.session.itemsPerPage;
-            state.itemsPerPage = state.session.itemsPerPage;
+        if (state.session.nightModeActive === true) {
+            document.body.classList.add('night');
+        } else {
+            document.body.classList.remove('night');
         }
+
+        /**
+         * Apply user's items-per-page-preference.
+         */
+
+        document.getElementById('items-per-page').innerText = state.session.itemsPerPage;
+
+        /**
+         * Apply users viewer background color preference. 
+         */
+
+        var selectedColor = state.session.viewerBgColor;
+
+        document.getElementById('selected-bg-color').style.background = selectedColor;
+        document.getElementById('viewer-window-content').style.background = selectedColor;
     }
 
-    function randomEmoji() {
-      var emoji = ['🌴', '🍕', '🎙️', '❤️', '🔥', '🔈','📻','🎵','🎶'];
-
-      return emoji[Math.floor(Math.random() * emoji.length)]
-    }
-
-    function addViewerBackgroundColorOption(newColor) {
-        const colorMenu = document.getElementById('bg-color-picker-menu');
-        const colorOption = document.createElement('div');
-
-        colorOption.style.background = newColor;
-
-        colorOption.classList.add('color-option');
-        colorOption.setAttribute('data-color', newColor);
-        colorOption.addEventListener('click', function() {
-            state.session.viewerBgColor = newColor;
-
-            storeSession();
-
-            document.getElementById('viewer-window-content').style.background = newColor;
-            document.getElementById('selected-bg-color').style.background = newColor;
-
-            var urlSegments = window.location.href.split('?');
-            var urlParams = urlSegments[1];
-            var newUrl = null;
-
-            if (urlParams) {
-                urlParams = new URLSearchParams(urlParams);
-
-                urlParams.delete('bg');
-
-                var colorOrHash = newColor;
-
-                if (DEFAULT_BG_COLOR_OPTIONS.indexOf(colorOrHash) === -1) {
-                    colorOrHash = '#' + colorOrHash;
-                }
-
-                newUrl = urlSegments[0] + '?' + urlParams.toString() + '&bg=' + encodeURIComponent(colorOrHash);
-
-                // window.location.href = newUrl;
-                window.history.pushState({}, document.title, newUrl);
-            }
-
-            
-            closeColorPickerMenu();
-        });
-
-        colorMenu.appendChild(colorOption);
-    }
-
-    function closeColorPickerMenu() {
-        state.viewerColorMenuOpen = false;
-
-        document.getElementById('bg-color-picker-menu').classList.add('hidden');
-        document.getElementById('hex-color-picker-container').classList.add('hidden');
-    }
-
-    function closePopUp() {
-        document.getElementById('pop-up-container').classList.add('hidden');
-        document.getElementById('gallery-link-content').classList.add('hidden');
-        document.getElementById('settings-content-container').classList.add('hidden');
-    }
-
-    function closeSidebar() {
-        document.getElementById('sidebar-container').classList.add('hidden');
-    }
+    /**
+     * Attach page event handlers.
+     * 
+     * @returns {undefined}
+     */
 
     function attachHandlers() {
+        document.getElementById('main-menu-link').addEventListener('click', function() {
+            renderGalleryList();
+        });
+
         document.addEventListener('keydown', function(evt) {
             if (evt.code && evt.code === 'Escape' || evt.keyCode && evt.keyCode === 27) {
                 closeSidebar();
@@ -522,7 +405,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         });
 
         var hexColorSubmitHandler = function() {
-            let newColor = document.getElementById('hex-color-picker').textContent;
+            var newColor = document.getElementById('hex-color-picker').textContent;
 
             newColor = newColor.replace('#', '');
         
@@ -569,10 +452,14 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             }
         });
 
+        document.getElementById("hex-color-picker").addEventListener('click', function() {
+            document.getElementById('hex-color-picker').innerHTML = '';
+        });
+
         document.getElementById('hex-color-picker-submit').addEventListener('click', hexColorSubmitHandler);
 
         document.getElementById("settings-import-input").addEventListener("input", function() {
-            const text = document.getElementById("settings-import-input").innerText;
+            var text = document.getElementById("settings-import-input").innerText;
 
             document.getElementById("settings-import-input").innerHTML = '';
             document.getElementById("settings-import-input").innerText = '';
@@ -589,7 +476,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         }, false);
 
         document.getElementById("wallet-lookup-input").addEventListener("input", function() {
-            const text = document.getElementById("wallet-lookup-input").innerText;
+            var text = document.getElementById("wallet-lookup-input").innerText;
 
             document.getElementById("wallet-lookup-input").innerHTML = '';
             document.getElementById("wallet-lookup-input").innerText = '';
@@ -673,6 +560,8 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             modifyItemsPerPage(0);
         });
 
+        var urlSearchParamsObj = new URLSearchParams(window.location.search);
+        var urlQuerystrings = Object.fromEntries(urlSearchParamsObj.entries());
         var navigateNextPage = function(evt) {
             if (Array.prototype.slice.call(evt.target.classList, 0).indexOf('disabled') !== -1) {
                 evt.stopPropagation();
@@ -682,7 +571,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             }
 
             document.getElementById('next-page-controls').classList.add('hidden');
-            populateCollection(state.galleryJSON);
+            populateCollection(state.galleryJSON, state.viewOptions.i_tz);
         };
 
         document.getElementById('next-page').addEventListener('click', navigateNextPage);
@@ -703,12 +592,276 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             }
 
             document.getElementById('next-page-controls').classList.add('hidden');
-            populateCollection(state.galleryJSON);
+            populateCollection(state.galleryJSON, state.viewOptions.i_tz);
         };
 
         document.getElementById('previous-page').addEventListener('click', navigatePreviousPage);
         document.getElementById('previous-page-mobile').addEventListener('click', navigatePreviousPage);
     }
+
+    /**
+     * Load existing session store from browser localStorage or create, store, and return a default session store.
+     * @link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+     * 
+     * @returns {Object} Initialized session store that matches the session store in localStorage
+     */
+
+    function initSessionStore() {
+        var sessionStore = window.localStorage.getItem(SESSION_STORE_KEY);
+
+        if (sessionStore) {
+            try {
+                var parsedSessionStore = JSON.parse(sessionStore);
+    
+                return parsedSessionStore;
+            } catch (err) {
+                console.error('Failed to parse session store loaded from localStorage');
+    
+                throw err;
+            }
+        }
+
+        var defaultSession = {
+            nightModeActive: false,
+            itemsPerPage: DEFAULT_PER_PAGE,
+            viewerBgColor: DEFAULT_VIEWER_BG_COLOR,
+            galleryIndex: 0,
+            galleryMap: {}
+        };
+
+        var defaultSessionStore = {
+            default: defaultSession,
+        };
+
+        window.localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(defaultSessionStore));
+
+        return defaultSessionStore;
+    }
+
+    /**
+     * Initialize the volatile client state used for the current user interaction. This is a view/page
+     * specific state as opposed to the session storage which holds long term user session data.
+     * 
+     * @returns {Object} An initialized state object
+     */
+
+    function initState(session) {
+        /**
+         * Gather and parse URL querystrings to identify page options.
+         */
+
+        var urlSearchParamsObj = new URLSearchParams(window.location.search);
+        var urlQuerystrings = Object.fromEntries(urlSearchParamsObj.entries());
+        var defaultState = {
+            wallet: {
+                address: null,
+            },
+            isSyncingWallet: true, // must be set to false by event handlers below for sync button to enable
+            isLastPage: false,
+            session: session,
+            skipCounts: {
+                hic: 0,
+                fxhash: 0,
+                objktcom: 0
+            },
+            pageSkips: [],
+            viewOptions: urlQuerystrings,
+        };
+
+        return defaultState;
+    }
+
+    function spawnWalletInstance(cb) {
+        globalWalletClient = state.walletClient = new BeaconWallet({
+            name: 'OBJKTIV',
+            eventHandlers: {
+                ACTIVE_ACCOUNT_SET: {
+                    handler: function (account) {
+                        console.log('ACTIVE ACCOUNT SET', account)
+                        state.isSyncingWallet = false;
+
+                        if (!account || !account.address) {
+                            return cb(false);
+                        }
+
+                        state.wallet = account;
+
+                        cb(true);
+                    }
+                }
+            }
+        });
+
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACKNOWLEDGE_RECEIVED, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACTIVE_ACCOUNT_SET, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.ACTIVE_TRANSPORT_SET, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_ERROR, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_SENT, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.BROADCAST_REQUEST_SUCCESS, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.CHANNEL_CLOSED, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.HIDE_UI, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.INTERNAL_ERROR, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.LOCAL_RATE_LIMIT_REACHED, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.NO_PERMISSIONS, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_ERROR, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_SENT, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.OPERATION_REQUEST_SUCCESS, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PAIR_INIT, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PAIR_SUCCESS, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_ERROR, () => {
+            console.log('permissions request aborted');
+            state.isSyncingWallet = false;
+        });
+globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SENT, () => {
+            console.log('permissions request aborted');
+            state.isSyncingWallet = false;
+        });
+globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCESS, () => {
+            console.log('permissions request aborted');
+            state.isSyncingWallet = false;
+        });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SHOW_PREPARE, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_ERROR, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_SENT, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.SIGN_REQUEST_SUCCESS, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+// globalWalletClient.subscribeToEvent(beacon.BeaconEvent.UNKNOWN, () => {
+//             console.log('permissions request aborted');
+//             state.isSyncingWallet = false;
+//         });
+
+
+        globalWalletClient.subscribeToEvent(beacon.BeaconEvent.NO_PERMISSIONS, () => {
+            console.log('permissions request aborted');
+            state.isSyncingWallet = false;
+        });
+
+        globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SENT, () => {
+            console.log('permissions request aborted');
+            state.isSyncingWallet = false;
+        });
+    }
+
+    function addViewerBackgroundColorOption(newColor) {
+        var colorMenu = document.getElementById('bg-color-picker-menu');
+        var colorOption = document.createElement('div');
+
+        colorOption.style.background = newColor;
+
+        colorOption.classList.add('color-option');
+        colorOption.setAttribute('data-color', newColor);
+        colorOption.addEventListener('click', function() {
+            state.session.viewerBgColor = newColor;
+
+            storeSession();
+
+            document.getElementById('viewer-window-content').style.background = newColor;
+            document.getElementById('selected-bg-color').style.background = newColor;
+
+            var urlSegments = window.location.href.split('?');
+            var urlParams = urlSegments[1];
+            var newUrl = null;
+
+            if (urlParams) {
+                urlParams = new URLSearchParams(urlParams);
+
+                urlParams.delete('bg');
+
+                var colorOrHash = newColor;
+
+                if (DEFAULT_BG_COLOR_OPTIONS.indexOf(colorOrHash) === -1) {
+                    colorOrHash = '#' + colorOrHash;
+                }
+
+                newUrl = urlSegments[0] + '?' + urlParams.toString() + '&bg=' + encodeURIComponent(colorOrHash);
+
+                // window.location.href = newUrl;
+                window.history.pushState({}, document.title, newUrl);
+            }
+
+            
+            closeColorPickerMenu();
+        });
+
+        colorMenu.appendChild(colorOption);
+    }
+
+    function closeColorPickerMenu() {
+        state.viewerColorMenuOpen = false;
+
+        document.getElementById('bg-color-picker-menu').classList.add('hidden');
+        document.getElementById('hex-color-picker-container').classList.add('hidden');
+    }
+
+    function closePopUp() {
+        document.getElementById('pop-up-container').classList.add('hidden');
+        document.getElementById('gallery-link-content').classList.add('hidden');
+        document.getElementById('settings-content-container').classList.add('hidden');
+    }
+
+    function closeSidebar() {
+        document.getElementById('sidebar-container').classList.add('hidden');
+    }
+
 
     function setNightMode(isNightModeActive) {
         if (isNightModeActive) {
@@ -730,11 +883,11 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
     }
 
     function createObjktContainer(objkt) {
-        const container = document.createElement('div');
+        var container = document.createElement('div');
 
         container.classList.add('objkt-container');
 
-        const preview = document.createElement('div');
+        var preview = document.createElement('div');
 
         var openPopOutViewer = function () {
             var bgColor = state.session.viewerBgColor;
@@ -754,24 +907,23 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         preview.classList.add('preview');
         preview.addEventListener('click', openPopOutViewer);
 
-        // const resource = document.createElement('div');
+        // var resource = document.createElement('div');
 
         // resource.style.backgroundImage = 'url(' + objkt.displayImgUri + ')';
         // resource.classList.add('resource');
 
-        const metadata = document.createElement('div');
+        var metadata = document.createElement('div');
 
         metadata.classList.add('objkt-metadata');
 
-        const artist = document.createElement('a');
+        var artist = document.createElement('a');
 
         artist.classList.add('artist');
-        artist.setAttribute('href', objkt.platformIssuerUri);
-        artist.setAttribute('target', 'blank');
+        artist.setAttribute('href', window.location.href.split('?')[0].replace('#', '') + '?tz=' + state.wallet.address + '&i_tz=' + objkt.issuer.address);
 
         artist.innerText = objkt.issuer.handle;
 
-        const title = document.createElement('a');
+        var title = document.createElement('a');
 
         title.classList.add('title');
         title.setAttribute('href', '#');
@@ -785,7 +937,11 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         title.innerText = objkt.name;
 
-        const ipfsLink = document.createElement('a');
+        if (objkt.name && objkt.name.length > 45) {
+            title.classList.add('extra-long-title');
+        }
+
+        var ipfsLink = document.createElement('a');
 
         ipfsLink.classList.add('ipfs-link');
 
@@ -794,7 +950,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         ipfsLink.innerText = objkt.ipfsLink.substr(0, 20) + '...';
 
-        const gatewayLink = document.createElement('a');
+        var gatewayLink = document.createElement('a');
 
         gatewayLink.classList.add('gateway-link');
 
@@ -803,14 +959,14 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
 
         gatewayLink.innerText = objkt.gatewayUri.substr(0, 30) + '...';
 
-        const objktComLink = document.createElement('a');
+        // var objktComLink = document.createElement('a');
 
-        objktComLink.classList.add('objkt-com-link');
-        objktComLink.setAttribute('target', 'blank');
+        // objktComLink.classList.add('objkt-com-link');
+        // objktComLink.setAttribute('target', 'blank');
 
-        objktComLink.setAttribute('href', objkt.objktComLink);
+        // objktComLink.setAttribute('href', objkt.objktComLink);
 
-        objktComLink.innerText = objkt.objktComLink.substr(0, 30) + '...';
+        // objktComLink.innerText = objkt.objktComLink.substr(0, 30) + '...';
 
         var objktGallerySettings = document.createElement('div');
 
@@ -829,6 +985,47 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         metadata.appendChild(title);
         metadata.appendChild(document.createElement('br'));
         metadata.appendChild(artist);
+
+        var objktSettingsMenuContainer = document.createElement('div');
+
+        objktSettingsMenuContainer.classList.add('objkt-settings-menu-container');
+
+        var gallerySettingsLink = document.createElement('a');
+
+        gallerySettingsLink.setAttribute('href', '#');
+        gallerySettingsLink.classList.add('objkt-settings-link');
+        gallerySettingsLink.innerText = 'gallery settings';
+        gallerySettingsLink.addEventListener('click', function(evt) {
+            evt.preventDefault();
+            openGalleryMenu(objkt);
+        });
+
+        if (!state.wallet.anonymous) {
+            objktSettingsMenuContainer.appendChild(gallerySettingsLink);
+        }
+
+        var platformObjktLink = document.createElement('a');
+
+        platformObjktLink.setAttribute('href', objkt.platformUri);
+        platformObjktLink.setAttribute('target', '_blank');
+        platformObjktLink.classList.add('objkt-settings-link');
+        platformObjktLink.innerText = 'view original';
+
+        objktSettingsMenuContainer.appendChild(platformObjktLink);
+        objktSettingsMenuContainer.classList.add('hidden');
+
+        if (objkt.objktComLink) {
+            var objktComLink = document.createElement('a');
+
+            objktComLink.setAttribute('href', objkt.objktComLink);
+            objktComLink.setAttribute('target', '_blank');
+            objktComLink.classList.add('objkt-settings-link');
+            objktComLink.innerText = 'view objkt.com';
+    
+            objktSettingsMenuContainer.appendChild(objktComLink);
+        }
+        
+        metadata.appendChild(objktSettingsMenuContainer);
         // metadata.appendChild(document.createElement('br'));
         // metadata.appendChild(document.createElement('br'));
         // metadata.appendChild(objktComLink);
@@ -836,12 +1033,46 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         // metadata.appendChild(ipfsLink);
         // preview.appendChild(resource);
         preview.appendChild(img);
-        
-        if (!state.wallet.anonymous) {
-            // metadata.appendChild(objktGallerySettings);
-        }
+
+        var objktSettings = document.createElement('div');
+
+        objktSettings.classList.add('objkt-settings-toggle');
+        objktSettings.innerHTML = '<div class="objkt-settings-toggle-icon"></div>'
+            + '<div class="objkt-settings-toggle-icon"></div>'
+            + '<div class="objkt-settings-toggle-icon"></div>';
+        // if (!state.wallet.anonymous) {
+        //     metadata.appendChild(objktGallerySettings);
+        // }
     
+        metadata.appendChild(objktSettings)
+
+        gallerySettingsLink.addEventListener('click', function() {
+            objktSettingsMenuContainer.classList.add('hidden');
+        });
+
+        platformObjktLink.addEventListener('click', function() {
+            objktSettingsMenuContainer.classList.add('hidden');
+        });
+
+        objktComLink.addEventListener('click', function() {
+            objktSettingsMenuContainer.classList.add('hidden');
+        });
+
+        objktSettings.addEventListener('click', function() {
+            if (Array.prototype.slice.call(objktSettingsMenuContainer.classList).indexOf('hidden') === -1) {
+                objktSettingsMenuContainer.classList.add('hidden');
+            } else {
+                objktSettingsMenuContainer.classList.remove('hidden');
+            }
+        });
+
         container.appendChild(preview);
+
+        var previewPush = document.createElement('div');
+
+        previewPush.classList.add('preview-push');
+        preview.appendChild(previewPush);
+
         container.appendChild(metadata);
 
         var wrapper = document.createElement('div');
@@ -889,18 +1120,21 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         return wrapper;  
     }
 
-    function loadHicTokens(address, galleryMap, perPage) {
+    function loadHicTokens(address, galleryMap, perPage, creatorAddress) {
         var idList = galleryMap && galleryMap.hic;
         var constraint = '';
         var shouldQuery = true;
+        var creatorAddressConstraint = 'token: {creator: {address: {_neq: $address}}}';
 
-        if (Array.isArray(idList) && idList.length) {
+        if (creatorAddress) {
+            creatorAddressConstraint = 'token: {creator: {address: {_eq: "' + creatorAddress + '"}}}';
+        } else if (Array.isArray(idList) && idList.length) {
             /**
              * The hic indexer allows us to query by ID + wallet holder, so we can search for gallery objkts directly.
              */
             constraint = ', _or: [';
 
-            for (let i = 0; i < idList.length; i++) {
+            for (var i = 0; i < idList.length; i++) {
                 constraint += '{token_id: {_eq: ' + idList[i] + '}}';
 
                 if (i < idList.length -1) {
@@ -919,7 +1153,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                query: "\nquery collectorGallery($address: String!) {\n  hic_et_nunc_token_holder(limit: " + perPage + ", offset: " + state.skipCounts.hic + ", where: {holder_id: {_eq: $address}, token: {creator: {address: {_neq: $address}}}, quantity: {_gt: \"0\"} " + constraint + "}, order_by: {token_id: desc}) {\n    token {\n      id\n      artifact_uri\n      display_uri\n      thumbnail_uri\n      timestamp\n      mime\n      title\n      description\n      supply\n      royalties\n      creator {\n        address\n        name\n      }\n    }\n  }\n}\n",
+                query: "\nquery collectorGallery($address: String!) {\n  hic_et_nunc_token_holder(limit: " + perPage + ", offset: " + state.skipCounts.hic + ", where: {holder_id: {_eq: $address}, " + creatorAddressConstraint + ", quantity: {_gt: \"0\"} " + constraint + "}, order_by: {token_id: desc}) {\n    token {\n      id\n      artifact_uri\n      display_uri\n      thumbnail_uri\n      timestamp\n      mime\n      title\n      description\n      supply\n      royalties\n      creator {\n        address\n        name\n      }\n    }\n  }\n}\n",
                 variables: {
                     address: address,
                 },
@@ -928,18 +1162,47 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         });
     }
 
-    function loadFxhashTokens(address, galleryMap, perPage) {
+    function loadFxhashTokens(address, galleryMap, perPage, creatorAddress) {
         var idList = galleryMap && galleryMap.fxhash;
         var constraint = '(take: ' + perPage + ', skip: ' + state.skipCounts.fxhash + ')';
         var shouldQuery = true;
+        var addtlArgs = '';
+        var queryVars = {
+            "id": address,
+        };
 
-        if (Array.isArray(idList) && idList.length) {
-            /**
-             * The fxhash indexer does not have pagination, and querying by objkt id and retrieving
-             * owners, so if we are looking for specific objkts (for gallery) we need the entire list.
-             */
+        if (creatorAddress) {
+            addtlArgs = ', $filters: ObjktFilter';
+            constraint = '(filters: $filters, take: ' + perPage + ', skip: ' + state.skipCounts.fxhash + ')';
+            queryVars.filters =  {
+                author_in: [creatorAddress]
+            };
+        } else if (Array.isArray(idList) && idList.length) {
+            return Promise.all(idList.map((id) => fetch('https://api.fxhash.xyz/graphql', {
+                method : "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "operationName": "Query",
+                    "variables": {
+                        objktId: id,
+                    },
+                    "query": "query Query($objktId: Float) {\nobjkt(id: $objktId) {\n      id\n      assigned\n      iteration\n      owner {\n        id\n        name\n        flag\n        avatarUri\n        __typename\n      }\n      issuer {\n        name\n        flag\n        author {\n          id\n          name\n          flag\n          avatarUri\n          __typename\n        }\n        __typename\n      }\n      name\n      metadata\n      createdAt\n      offer {\n        id\n        price\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n"
+                }),
+            })))
+            .then((results) => Promise.all(results.map((r) => r ? r.json() : r)))
+            .then((results) => {
+                results = results.filter((result) => {
+                    return result && result.data && result.data.objkt && result.data.objkt.owner && result.data.objkt.owner.id === address;
+                });
 
-            constraint = '';
+                return !results.length ? null : results.reduce((acc, result) => {
+                    acc.data.user.objkts.push(result.data.objkt);
+
+                    return acc;
+                }, {data: {user: {objkts: []}}});
+            });
         } else if (Array.isArray(idList)) {
             shouldQuery = false;
         }
@@ -951,21 +1214,22 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             },
             body: JSON.stringify({
                 "operationName": "Query",
-                "variables": {
-                    "id": address,
-                },
-                "query": "query Query($id: String!) {\n  user(id: $id) {\n    id\n    objkts" + constraint + " {\n      id\n      assigned\n      iteration\n      owner {\n        id\n        name\n        flag\n        avatarUri\n        __typename\n      }\n      issuer {\n        name\n        flag\n        author {\n          id\n          name\n          flag\n          avatarUri\n          __typename\n        }\n        __typename\n      }\n      name\n      metadata\n      createdAt\n      offer {\n        id\n        price\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
+                "variables": queryVars,
+                "query": "query Query($id: String!" + addtlArgs + ") {\n  user(id: $id) {\n    id\n    objkts" + constraint + " {\n      id\n      assigned\n      iteration\n      owner {\n        id\n        name\n        flag\n        avatarUri\n        __typename\n      }\n      issuer {\n        name\n        flag\n        author {\n          id\n          name\n          flag\n          avatarUri\n          __typename\n        }\n        __typename\n      }\n      name\n      metadata\n      createdAt\n      offer {\n        id\n        price\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
             }),
         });
     }
 
-    function loadObjktComTokens(address, galleryMap, perPage) {
+    function loadObjktComTokens(address, galleryMap, perPage, creatorAddress) {
         var idList = galleryMap && galleryMap.objktcom;
         var skipConstraint = 'limit: ' + perPage + ', offset: ' +  state.skipCounts.objktcom + ',';
         var shouldQuery = true;
         var idConstraint = '';
+        var addressConstraint = '';
 
-        if (Array.isArray(idList) && idList.length) {
+        if (creatorAddress) {
+            addressConstraint = '{token: {fa2: {creator: {address: {_eq: "' + creatorAddress + '"}}}}},';
+        } else if (Array.isArray(idList) && idList.length) {
             var idArr = idList.map((meta) => {
                 var seg = meta.split('|');
 
@@ -984,35 +1248,47 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                query: 'query GetObjktComTokens {token(order_by: {timestamp: desc},' + skipConstraint + ' where: {token_holders: {quantity: {_gt: 0}, holder: {address: {_eq: "' + address + '"}}, _and: [' + idConstraint + '{token: {fa2: {contract: {_neq: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"}}}}, {token: {fa2: {contract: {_neq: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"}}}}]}}) {id,fa2 {name,contract,collection_id},timestamp,title,creator {tzdomain,address,alias},mime,description,display_uri,artifact_uri,thumbnail_uri}}'
+                query: 'query GetObjktComTokens {token(order_by: {timestamp: desc},' + skipConstraint + ' where: {token_holders: {quantity: {_gt: 0}, holder: {address: {_eq: "' + address + '"}}, _and: [' + addressConstraint + '' + idConstraint + '{token: {fa2: {contract: {_neq: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"}}}}, {token: {fa2: {contract: {_neq: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"}}}}]}}) {id,fa2 {name,contract,collection_id},timestamp,title,creator {tzdomain,address,alias},mime,description,display_uri,artifact_uri,thumbnail_uri}}'
             }),
         });
     }
 
     // TODO you need to check marketplace totals and see if you even CAN get more given a page #
-    function loadWalletTokens(address, galleryMap) {
+    function loadWalletTokens(address, galleryMap, creatorAddress) {
         // TODO skip count per smart contractperPage
-        // var skipCount = state.page ? state.page * state.itemsPerPage : 0;
-        var perPage = Math.floor(state.itemsPerPage * 1.5);
+        // var skipCount = state.page ? state.page * state.session.itemsPerPage : 0;
+        var perPage = Math.floor(state.session.itemsPerPage * 1.5);
         var promises = [];
     
-        promises.push(loadHicTokens(address, galleryMap, perPage));
-        promises.push(loadFxhashTokens(address, galleryMap, perPage));
-        promises.push(loadObjktComTokens(address, galleryMap, perPage));
+        promises.push(loadHicTokens(address, galleryMap, perPage, creatorAddress));
+        promises.push(loadFxhashTokens(address, galleryMap, perPage, creatorAddress));
+        promises.push(loadObjktComTokens(address, galleryMap, perPage, creatorAddress));
 
         return Promise.all(promises)
-        .then((res) => Promise.all(res.map((d) => !d ? d : d.json())))
         .then(([hic, fxhash, objktcom]) => {
-            /**
-             * Our fxhash indexer does not support querying by id, so if we are in gallery
-             * view we need to search through all objkts to find the correct ones.
-             */
+            var promises = [];
+
+            promises.push(hic && hic.text ? hic.text() : hic);
+            promises.push(fxhash && fxhash.text ? fxhash.text() : fxhash);
+            promises.push(objktcom && objktcom.text? objktcom.text() : objktcom);
+
+            return Promise.all(promises);
+        })
+        .then(([hic, fxhash, objktcom]) => {
+            hic = typeof hic ==='string' ? JSON.parse(hic) : hic;
+            fxhash = typeof fxhash === 'string' ? JSON.parse(fxhash) : fxhash;
+            objktcom = typeof objktcom === 'string' ? JSON.parse(objktcom) : objktcom;
+
+            console.log('hasddas', fxhash)
 
             if (
                 galleryMap
                 && galleryMap.fxhash
                 && galleryMap.fxhash.length
-                && (fxhash && fxhash.data && fxhash.data.user && fxhash.data.user.objkts && fxhash.data.user.objkts.length)) {
+                && fxhash
+                && fxhash.data
+                && fxhash.data.user
+                && fxhash.data.user.objkts) {
                 fxhash.data.user.objkts = fxhash.data.user.objkts.filter(function(o) {
                     var fxhashIdList = galleryMap && galleryMap.fxhash;
 
@@ -1024,8 +1300,8 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 } else {
                     fxhash.data.user.objkts.splice(0, state.skipCounts.fxhash);
 
-                    if (fxhash.data.user.objkts.length > state.itemsPerPage) {
-                        state.skipCounts.fxhash = state.skipCounts.fxhash.slice(0, state.itemsPerPage);
+                    if (fxhash.data.user.objkts.length > state.session.itemsPerPage) {
+                        state.skipCounts.fxhash = state.skipCounts.fxhash.slice(0, state.session.itemsPerPage);
                     }
                 }
             }
@@ -1104,6 +1380,8 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 || !objktcom.data.token
                 ? [] : objktcom.data.token.map((o) => {
                     var mimeBase = o.mime.split('/')[0];
+                    var tokenType;
+                    var ipfsGatewayHost;
 
                     if (mimeBase === 'image' || mimeBase === 'model') {
                         ipfsGatewayHost = 'https://cloudflare-ipfs.com/ipfs/';
@@ -1122,7 +1400,7 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                         description: o.description,
                         displayImgIpfsHash: o.display_uri.substr(7),
                         displayImgUri: 'https://cloudflare-ipfs.com/ipfs/' + o.display_uri.substr(7),
-                        gatewayUri: 'https://gateway.fxhash.xyz/ipfs/' + o.artifact_uri.substr(7), 
+                        gatewayUri: ipfsGatewayHost + o.artifact_uri.substr(7), 
                         identifier: o.id + '|' + o.fa2.contract,
                         ipfsLink: o.artifact_uri,
                         issuer: {
@@ -1151,18 +1429,18 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                 return false;
             }
 
-            if (sortedCollection.length <= state.itemsPerPage) {
+            if (sortedCollection.length <= state.session.itemsPerPage) {
                 state.isLastPage = true;
             } else {
                 state.isLastPage = false;
             }
 
-            var selectedCollection = sortedCollection.slice(0, state.itemsPerPage);
+            var selectedCollection = sortedCollection.slice(0, state.session.itemsPerPage);
 
             state.pageSkips.push(JSON.parse(JSON.stringify(state.skipCounts)));
             console.log('unincreased skip counts', state.skipCounts)
 
-            for (let i = 0; i < selectedCollection.length; i++) {
+            for (var i = 0; i < selectedCollection.length; i++) {
                 var objkt = selectedCollection[i];
                 var platform = objkt.issuer.platform.toLowerCase();
 
@@ -1181,12 +1459,12 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
     }
 
     function modifyItemsPerPage(modifier) {
-        const countOptions = [10, 25, 50, 100];
-        const currentOption = countOptions.indexOf(state.itemsPerPage);
-        const shouldIncrease = modifier && currentOption !== countOptions.length - 1;
-        const shouldDecrease = !modifier && currentOption !== 0;
+        var countOptions = [10, 25, 50, 100];
+        var currentOption = countOptions.indexOf(state.session.itemsPerPage);
+        var shouldIncrease = modifier && currentOption !== countOptions.length - 1;
+        var shouldDecrease = !modifier && currentOption !== 0;
 
-        let newOption;
+        var newOption;
 
         if (shouldIncrease) {
             newOption = countOptions[currentOption + 1];
@@ -1200,19 +1478,22 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             storeSession();
             resetSkipCounts();
 
-            state.itemsPerPage = newOption;
+            state.session.itemsPerPage = newOption;
             state.pageSkips = [];
 
             document.getElementById('items-per-page').innerText = newOption;
 
-            populateCollection(state.galleryJSON);
+            var urlSearchParamsObj = new URLSearchParams(window.location.search);
+            var urlQuerystrings = Object.fromEntries(urlSearchParamsObj.entries());
+
+            populateCollection(state.galleryJSON, state.viewOptions.i_tz);
         }
     }
 
     function resetSkipCounts() {
         var platforms = Object.keys(state.skipCounts);
 
-        for (let i = 0; i < platforms.length; i++) {
+        for (var i = 0; i < platforms.length; i++) {
             state.skipCounts[platforms[i]] = 0;
         }
     }
@@ -1222,18 +1503,20 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
         renderGalleryList(objkt);
     }
 
-    function populateCollection(galleryMap) {
-        const contentContainer = document.getElementById('main-content');
+    function populateCollection(galleryMap, creatorAddress) {
+        var contentContainer = document.getElementById('main-content');
 
         contentContainer.innerHTML = '';
 
-        return loadWalletTokens(state.wallet.address, galleryMap)
+        return loadWalletTokens(state.wallet.address, galleryMap, creatorAddress)
         .then((tokens) => {
+            contentContainer.innerHTML = '';
+
             if (!tokens) {
                 return false;
             }
 
-            for (let i = 0; i < tokens.length; i++) {
+            for (var i = 0; i < tokens.length; i++) {
                 contentContainer.appendChild(createObjktContainer(tokens[i]));
             }
 
@@ -1313,10 +1596,12 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             setPopUpHeaderContent('Gallery Membership');
             document.getElementById('new-gallery-input').classList.add('hidden');
             document.getElementById('new-gallery-submit').classList.add('hidden');
+            document.getElementById('no-gallery-message-container').classList.remove('hidden');
         } else {
             setPopUpHeaderContent('Manage Galleries');
             document.getElementById('new-gallery-input').classList.remove('hidden');
             document.getElementById('new-gallery-submit').classList.remove('hidden');
+            document.getElementById('no-gallery-message-container').classList.add('hidden');
         }
 
         var galleryList = document.getElementById('gallery-link-container');
@@ -1331,7 +1616,13 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
             return state.session.galleryMap[a].displayName.charCodeAt(0) - state.session.galleryMap[b].displayName.charCodeAt(0);
         });
 
-        for (let i = 0; i < galleryKeys.length; i++) {
+        if (!galleryKeys.length && !!objkt) {
+            document.getElementById('no-gallery-message-container').classList.remove('hidden');
+        } else {
+            document.getElementById('no-gallery-message-container').classList.add('hidden');
+        }
+
+        for (var i = 0; i < galleryKeys.length; i++) {
             var gallery = state.session.galleryMap[galleryKeys[i]];
             var el = document.createElement('div');
 
@@ -1408,7 +1699,6 @@ globalWalletClient.subscribeToEvent(beacon.BeaconEvent.PERMISSION_REQUEST_SUCCES
                         state.session.galleryMap[galleryKeys[i]][issuer].push(objkt.identifier);
                         storeSession();
                         renderGalleryList(objkt);
-                        document.getElementById('pop-up-container').classList.add('hidden');
                         evt.preventDefault();
                     });
 
