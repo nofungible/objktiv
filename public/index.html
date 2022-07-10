@@ -1,141 +1,309 @@
+<!--
+    ░█████╗░██████╗░░░░░░██╗██╗░░██╗████████╗██╗██╗░░░██╗
+    ██╔══██╗██╔══██╗░░░░░██║██║░██╔╝╚══██╔══╝██║██║░░░██║
+    ██║░░██║██████╦╝░░░░░██║█████═╝░░░░██║░░░██║╚██╗░██╔╝
+    ██║░░██║██╔══██╗██╗░░██║██╔═██╗░░░░██║░░░██║░╚████╔╝░
+    ╚█████╔╝██████╦╝╚█████╔╝██║░╚██╗░░░██║░░░██║░░╚██╔╝░░
+    ░╚════╝░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░
+    ▀▀█▀▀ █▀▀ ▀▀█ █▀▀█ █▀▀ 　 ░█▄─░█ ░█▀▀▀ ▀▀█▀▀ 　 ▀█─█▀ ─▀─ █▀▀ █───█ █▀▀ █▀▀█
+    ─░█── █▀▀ ▄▀─ █──█ ▀▀█ 　 ░█░█░█ ░█▀▀▀ ─░█── 　 ─█▄█─ ▀█▀ █▀▀ █▄█▄█ █▀▀ █▄▄▀
+    ─░█── ▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀ 　 ░█──▀█ ░█─── ─░█── 　 ──▀── ▀▀▀ ▀▀▀ ─▀─▀─ ▀▀▀ ▀─▀▀
+-->
+
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./style.css">
-  <title>(っ ^ з ^) 💖 🌮 </title>
-  <script type="module" src="./model-viewer.min.js"></script>
-</head>
-<body>
-  <div id="content">
-    <div id="header-cta" class="hidden">
-      <span>Viewing anonymously! <a href="#" id="exit-anon">Exit</a> and sync.</span>
-    </div>
-    <div id="header">
-      <div id="sidebar-toggle">
-        <div class="sidebar-toggle-icon"></div>
-        <div class="sidebar-toggle-icon"></div>
-        <div class="sidebar-toggle-icon"></div>
-      </div>
-      <div class="border-box"></div>
-      <p id="title">OBJKTIV >_ Tezos NFT Viewer</p>
-      <!-- <pre id="title">
-░█████╗░██████╗░░░░░░██╗██╗░░██╗████████╗██╗██╗░░░██╗
-██╔══██╗██╔══██╗░░░░░██║██║░██╔╝╚══██╔══╝██║██║░░░██║
-██║░░██║██████╦╝░░░░░██║█████═╝░░░░██║░░░██║╚██╗░██╔╝
-██║░░██║██╔══██╗██╗░░██║██╔═██╗░░░░██║░░░██║░╚████╔╝░
-╚█████╔╝██████╦╝╚█████╔╝██║░╚██╗░░░██║░░░██║░░╚██╔╝░░
-░╚════╝░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░
-      </pre>
-      <div id="title-subheading">
-        <pre>
-▀▀█▀▀ █▀▀ ▀▀█ █▀▀█ █▀▀ 　 ░█▄─░█ ░█▀▀▀ ▀▀█▀▀ 　 ▀█─█▀ ─▀─ █▀▀ █───█ █▀▀ █▀▀█
-─░█── █▀▀ ▄▀─ █──█ ▀▀█ 　 ░█░█░█ ░█▀▀▀ ─░█── 　 ─█▄█─ ▀█▀ █▀▀ █▄█▄█ █▀▀ █▄▄▀
-─░█── ▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀ 　 ░█──▀█ ░█─── ─░█── 　 ──▀── ▀▀▀ ▀▀▀ ─▀─▀─ ▀▀▀ ▀─▀▀
-        </pre>
-      </div> -->
-    </div>
-    <div id="sidebar-container" class="hidden">
-      <div id="sidebar">
-        <span id="version-string">v0.2.0</span>
-        <a id="home-link" class="sidebar-link" href="/">home</a>
-        <a id="sync" class="sidebar-link" href="#">sync</a>
-        <div id="wallet-nav" class="hidden">
-          <a id="galleries-link" class="sidebar-link" href="#">gallery</a>
-          <a id="settings-link" class="sidebar-link" href="#">settings</a>
-        </div>
-        <a id="about" class="sidebar-link" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">about</a>
-        <a id="day-night-toggle" class="sidebar-link" href="#">day/night</a>
-      </div>
-    </div>
-    <div id="nav">
-      <div id="wallet-lookup-container">
-        <div id="wallet-lookup-submit">View Wallet</div>
-        <div id="wallet-lookup-input" contenteditable wrap='off'></div>
-      </div>
-      <!-- <br id="wallet-lookup-break"/>
-      <a id="sync" href="#">sync</a>
-      <a id="about" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">about</a>
-      <span id="wallet-nav" class="hidden">
-        <a id="galleries-link" href="#">gallery</a>
-        <a id="settings-link" href="#">settings</a>
-      </span> -->
-      <div id="page-control-nav" class="">
-        <span>Per Page:&nbsp;</span>
-        <span id="decrease-items-per-page"><<</span>
-        <span id="items-per-page">10</span>
-        <span id="increase-items-per-page">>></span>
-      </div>
-    </div>
-    <div id="pop-up-container" class="hidden">
-      <div id="pop-up-wrapper">
-        <div id="pop-up-exit-overlay"></div>
-        <div id="pop-up">
-          <div id="pop-up-header">
-            <div class="border-box"></div>
-            <div id="pop-up-exit">X</div>
-            <p id="pop-up-header-content">Your Galleries</p>
-          </div>
-          <div id="gallery-link-content" class="pop-up-content hidden">
-            <span id="new-gallery-submit">+</span><div id="new-gallery-input" contenteditable wrap='off'></div>
-            <div id="no-gallery-message-container">
-              <p id="no-gallery-message">No galleries.<br><br>Create one<br>via <a id="main-menu-link" href="#">gallery menu</a>.</p>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./style.css">
+        <title>Tezos NFT Viewer</title>
+        <script type="module" src="./js/model-viewer.min.js"></script>
+    </head>
+    <body>
+        <div id="content">
+            <!--
+                CTA Banner
+                Primarily used to provide anonymous view warning.
+            -->
+            <div id="cta-banner" class="">
+                <span>v0.3.0 Release Candidate</span>
             </div>
-            <div id="gallery-link-container"></div>
-          </div>
-          <div id="settings-content-container" class="pop-up-content hidden">
-            <div class="settings-nav-item">
-              <div id="settings-import-container">
-                <div id="settings-import-input" contenteditable wrap='off'></div>
-                <div id="settings-import-submit" class="button disabled">Import Settings</div>
-              </div>
+
+            <!-- Site Header -->
+            <div id="header">
+                <!-- Sidebar Toggle Button (hamburger menu icon) -->
+                <div id="sidebar-toggle">
+                    <div class="sidebar-toggle-icon"></div>
+                    <div class="sidebar-toggle-icon"></div>
+                    <div class="sidebar-toggle-icon"></div>
+                </div>
+                <div class="border-box"></div>
+                <p id="title">OBJKTIV >_ Tezos NFT Viewer</p>
+
+                <!--
+                    Sidebar
+                    This element resides inside the header for ease of absolute positioning below the header.
+                -->
+                <div id="sidebar" class="hidden">
+                    <span id="version-string">v0.3.0</span>
+                    <div id="wallet-nav" class="hidden">
+                        <a id="settings-link" class="sidebar-link" href="/?view=collection">collection</a>
+                        <a id="galleries-link" class="sidebar-link" href="/?view=galleries">galleries</a>
+                        <a id="settings-link" class="sidebar-link" href="/?view=settings">settings</a>
+                    </div>
+                    <a id="sync" class="sidebar-link" href="#">sync</a>
+                    <a id="day-night-toggle" class="sidebar-link" href="#">day/night</a>
+                </div>
             </div>
-            <div class="settings-nav-item">
-              <div id="settings-export-container">
-                <p id="settings-export-text"></p>
-                <div id="settings-export-submit" class="button">Export Settings</div>
-              </div>
+
+            <!--
+                Pop-Up Container
+                Reusable container for all user facing pop-up notifications.
+            -->
+            <div id="pop-up-container" class="hidden">
+                <div id="pop-up-wrapper">
+                    <div id="pop-up-exit-overlay"></div>
+                    <div id="pop-up">
+                        <div id="pop-up-header">
+                            <div class="border-box"></div>
+                            <div id="pop-up-exit">X</div>
+                            <p id="pop-up-header-content">Your Galleries</p>
+                        </div>
+                        <div id="gallery-settings-container" class="pop-up-content hidden">
+                            <p id="gallery-management-tooltip"></p>
+                            <br>
+                            <div id="gallery-settings-content">
+                                <p id="no-gallery-message">no galleries<br>created</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <!-- Settings Management View -->
+            <div id="settings-management-view" class="hidden page-view">
+                <div id="settings-management-container">
+                    <p id="settings-management-header" class="page-view-header">YOUR SETTINGS</p>
+                    <div id="settings-management-content">
+                        <!-- Export Settings -->
+                        <div class="settings-item">
+                            <p class="settings-item-header">EXPORT SETTINGS</p>
+                            <div id="settings-export-container">
+                                <p id="settings-export-text" class="interactive"></p>
+                                <div id="settings-export-submit"><span class="bracket-button">[<span>EXPORT</span>]</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Import Settings -->
+                        <div class="settings-item">
+                            <p class="settings-item-header">IMPORT SETTINGS</p>
+                            <div id="settings-import-container">
+                                <div id="settings-import-input" contenteditable wrap='off'></div>
+                                <div id="settings-import-submit"><span class="bracket-button disabled">[<span>IMPORT</span>]</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Gateway Settings -->
+                        <div class="settings-item">
+                            <p class="settings-item-header">IPFS SETTINGS</p>
+                            <div id="gateway-select-container">
+                                <span>DEFAULT_GATEWAY: </span><span id="selected-gateway"></span>
+                                <div id="gateway-select-options-container" class="hidden">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assistant Settings -->
+                        <div class="settings-item">
+                            <p class="settings-item-header">ASSISTANT SETTINGS</p>
+                            <div id="assistant-settings-container">
+                                <span>ASSISTANT_AVATAR:</span>
+                                <span id="assistant-avatar-title" class="disabled">DEFAULT</span>
+                                <br>
+                                <br>
+                                <a id="assistant-avatar-view-submit" class="bracket-button hidden interactive" target="_blank">[VIEW]</a>
+                                <span id="assistant-avatar-reset-submit" class="bracket-button hidden interactive">[REMOVE]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token Artifact View -->
+            <div id="token-artifact-view" class="hidden page-view">
+                <div id="token-view-content">
+                </div>
+                <div id="token-view-content-nav" class="hidden">
+                    <div id="objkt-title">
+                        <span id="objkt-name"></span>
+                        <span id="artist-name"></span>
+                    </div>
+                    <div id="viewer-color-picker-nav">
+                        <div id="bg-color-picker">
+                            <div id="bg-color-picker-menu" class="hidden"></div>
+                            <div id="selected-bg-color"></div>
+                        </div>
+                        <div id="hex-color-picker-container" class="hidden">
+                            <div contenteditable="true" id="hex-color-picker" wrap='off'><span
+                                    id="hex-input-placeholder">#hexcode</span></div>
+                            <span id="hex-color-picker-submit">+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token Collection View -->
+            <div id="collection-view" class="hidden page-view">
+                <div id="nav">
+                    <div id="wallet-lookup-container">
+                        <div id="wallet-lookup-submit">View Wallet</div>
+                        <div id="wallet-lookup-input" contenteditable wrap='off'></div>
+                    </div>
+                    <br id="nav-break" />
+                    <!-- <br id="wallet-lookup-break"/>
+            <a id="sync" href="#">sync</a>
+            <a id="about" href="https://github.com/mikesizz/objktiv-alpha/blob/master/README.md#objktiv-tezos-nft-viewer" target="_blank">about</a>
+            <span id="wallet-nav" class="hidden">
+            <a id="galleries-link" href="#">gallery</a>
+            <a id="settings-link" href="#">settings</a>
+            </span> -->
+                    <div id="page-control-nav" class="hidden">
+                        <span>Per Page&nbsp;</span>
+                        <span id="decrease-items-per-page"><<</span>
+                        <span id="items-per-page">10</span>
+                        <span id="increase-items-per-page">>></span>
+                    </div>
+                    <div id="view-style-nav" class="hidden">
+                        <div id="selected-view-style">View: <span id="view-style-text">Grid</span></div>
+                        <div id="view-style-options-container" class="hidden">
+                            <div class="view-style-option"><span>Grid</span></div>
+                            <div class="view-style-option"><span>Masonry</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="main-content-loading-screen" class="table">
+                    <div class="table-cell">
+                        <div id="loading-spinner" class="loader">
+                            <svg class="circular-loader" viewBox="25 25 50 50">
+                                <circle class="loader-path" cx="50" cy="50" r="20" fill="none" stroke-width="2" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="main-content" class="grid hidden"></div>
+                <div id="next-page-controls" class="hidden">
+                    <a id="previous-page" class="previous-page-button" href="#"><< Prev. Page</a>
+                    <a id="previous-page-mobile" class="previous-page-button" href="#"><< Page</a>
+
+                    <span id="load-more-wrapper" class="hidden">
+                        <span>[</span><a id="load-more" href="#"> Load More </a><span>]</span>
+                    </span>
+
+                    <span id="next-page-control-flare">♡</span>
+
+                    <a id="next-page" class="next-page-button" href="#">Next Page >></a>
+                    <a id="next-page-mobile" class="next-page-button" href="#">Page >></a>
+                </div>
+            </div>
+
+            <!-- Gallery Management View -->
+            <div id="gallery-management-view" class="hidden page-view">
+                <div id="gallery-management-container">
+                    <p id="gallery-management-header" class="page-view-header">GALLERY MANAGEMENT</p>
+                    <div id="gallery-management-content">
+                        <div id="gallery-metadata-container" class="disabled">
+                            <div id="gallery-metadata-container-interaction-block"></div>
+                            <div>
+                                <span>Title:</span>
+                                <div id="gallery-metadata-title-input" contenteditable wrap='off'></div>
+                                <span id="gallery-metadata-title-input-submit" class="interactive">[SAVE]</span>
+                            </div>
+                            <div>
+                                <span id="gallery-metadata-share-url"></span><span id="gallery-metadata-share-url-copy" class="interactive">[SHARE]</span>
+                            </div>
+                            <div>
+                                <span id="gallery-metadata-token-count-label">Token Count: </span>
+                                <span id="gallery-metadata-token-count">-</span>
+                            </div>
+                            <div id="gallery-metadta-token-list"></div>
+                            <a id="gallery-metadata-view-gallery" class="interactive" href="">[View Gallery]</a>
+                            <p id="gallery-metadata-delete-gallery" class="interactive">[Delete Gallery]</p>
+                        </div>
+
+                        <div id="gallery-list-container">
+                            <div class="new-gallery-form"></div>
+                            <div id="gallery-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="basic-assistant-engine-container" class="out-of-view">
+                <div id="basic-assistant-engine-avatar">
+                    <div id="basic-assistant-engine-avatar-img-wrapper" class="">
+                        <div id="basic-assistant-engine-avatar-img-sentiment-highlight"></div>
+                        <!-- <img id="basic-assistant-engine-avatar-img" src="https://gateway.pinata.cloud/ipfs/QmNZrmNhyaU3p8VyLXiqcGbUqbv64aUNfSFtBibuZrAupL" alt=""> -->
+                    </div>
+                </div>
+                <div id="basic-assistant-engine-output-container" class="triangle-border left">
+                    <p id="basic-assistant-engine-output"></p>
+                    <div id="basic-assistant-engine-button-container" class="hidden">
+                        <div id="basic-assistant-engine-confrim-button" class="basic-assistant-engine-input-button" data-action="confirm">YES</div>
+                        <div id="basic-assistant-engine-deny-button" class="basic-assistant-engine-input-button" data-action="deny">NO</div>
+                    </div>
+                </div>
+            </div>
+
+            <!--
+                Site Footer Push
+                Invisible element used to push the content above where the absolutely positioned sticky footer visually rests.
+                Must be the same height as footer + box sizing.
+            -->
+            <div id="footer-push"></div>
+
+            <!-- Site Footer -->
+            <div id="footer">
+                <p>This is an experimental dApp <span id="footer-dash">-</span><br id="footer-break" /> Use at your own risk
+                </p>
+            </div>
         </div>
-      </div>
-    </div>
-    <div id="main-content"></div>
-    <div id="viewer-window" class="hidden">
-      <div id="viewer-window-content">
-      </div>
-      <div id="viewer-window-content-nav">
-        <div id="objkt-title">
-          <span id="objkt-name"></span>
-          <span id="artist-name"></span>
-        </div>
-        <div id="viewer-color-picker-nav">
-          <div id="bg-color-picker">
-            <div id="bg-color-picker-menu" class="hidden"></div>
-            <div id="selected-bg-color"></div>
-          </div>
-          <div id="hex-color-picker-container" class="hidden">
-            <div contenteditable="true" id="hex-color-picker" wrap='off'><span id="hex-input-placeholder">#hexcode</span></div>
-            <span id="hex-color-picker-submit">+</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="next-page-controls" class="hidden">
-      <a id="previous-page" class="previous-page-button" href="#"><< Prev. Page</a>
-      <a id="previous-page-mobile" class="previous-page-button" href="#"><< Page</a>
-      <span id="next-page-control-flare">♡</span>
-      <a id="next-page" class="next-page-button" href="#">Next Page >></a>
-      <a id="next-page-mobile" class="next-page-button" href="#">Page >></a>
-    </div>
-    <div id="footer-push">
-    </div>
-    <div id="footer">
-      <p>This is an experimental dApp <span id="footer-dash">-</span><br id="footer-break"/> Use at your own risk</p>
-    </div>
-  </div>
-  <script src="./beacon-sdk.min.js"></script>
-  <script src="./script.js"></script>
-</body>
+
+        <!-- Third party libraries/dependenices -->
+        <script src="./js/beacon-sdk.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/macy@2"></script>
+
+        <script src="./js/lib/util.js"></script>
+
+        <!-- Local libraries -->
+        <script src="./js/lib/token-manager.js"></script>
+        <script src="./js/lib/token-indexer.js"></script>
+        <script src="./js/lib/token-collection.js"></script>
+        <script src="./js/lib/session-store.js"></script>
+        <script src="./js/lib/event-emitter.js"></script>
+        <script src="./js/lib/wallet.js"></script>
+
+        <!-- TokenFetch library and token providers -->
+        <script src="./js/lib/token-fetch/token-providers/hicdex-teia.js"></script>
+        <script src="./js/lib/token-fetch/token-providers/objktcom.js"></script>
+        <script src="./js/lib/token-fetch/token-providers/fxhash.js"></script>
+        <script src="./js/lib/token-fetch/token-fetch.js"></script>
+
+        <!-- UI elements -->
+        <script src="./js/ui/basic-assistant-engine.js"></script>
+        <script src="./js/ui/new-gallery-form.js"></script>
+        <script src="./js/ui/pop-up-element.js"></script>
+        <script src="./js/ui/pop-up.js"></script>
+        <script src="./js/ui/sidebar.js"></script>
+
+        <!-- Page views -->
+        <script src="./js/view/page-view.js"></script>
+        <script src="./js/view/gallery-management-view.js"></script>
+        <script src="./js/view/settings-management-view.js"></script>
+        <script src="./js/view/token-artifact-view.js"></script>
+        <script src="./js/view/token-collection-view.js"></script>
+
+        <!-- Main application -->
+        <script src="./js/app.js"></script>
+    </body>
+
 </html>

@@ -1,10 +1,13 @@
 {
   "name": "objktiv",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.3.0",
+  "description": "NFT Artifact Viewer",
+  "scripts": {
+    "start": "node ./index.js"
+  },
   "main": "index.js",
-  "author": "",
-  "license": "ISC",
+  "author": "noFungible",
+  "license": "MIT",
   "dependencies": {
     "express": "4.17.1"
   }
