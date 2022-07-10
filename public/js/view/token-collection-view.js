@@ -1300,7 +1300,6 @@
             this._state.assistant.loadText(
                 'You don\'t have a wallet sync\'d, so I\'m not sure which collection to load...'
             , {
-                // level: 40,
                 callback: function () {
                     this._state.eventEmitter.emit(Util.eventKeys.DISPATCH_SIDEBAR_TOGGLE);
                     this._state.assistant.loadText(
