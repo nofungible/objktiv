@@ -61,30 +61,31 @@
             this._state.assistant.confirm(
                 'Are you sure you want me to try to import this settings hash?'
                     + '\n\nIf it\'s successful it will replace all of your current settings, including your galleries!'
-                , {level: 40}
-                , function () {
-                    var ciphertext = document.getElementById('settings-import-input').innerText;
+                , {
+                    confirmCallback: function () {
+                        var ciphertext = document.getElementById('settings-import-input').innerText;
 
-                    document.getElementById("settings-import-input").innerText = '';
-        
-                    var settings;
-        
-                    try {
-                        settings = Util.decrypt(ciphertext);
-        
-                        if (typeof settings !== 'object' || Array.isArray(settings)) {
-                            throw new Error('Settings not an object');
+                        document.getElementById("settings-import-input").innerText = '';
+
+                        var settings;
+
+                        try {
+                            settings = Util.decrypt(ciphertext);
+
+                            if (typeof settings !== 'object' || Array.isArray(settings)) {
+                                throw new Error('Settings not an object');
+                            }
+                        } catch (err) {
+                            console.error('Settings import input not valid settings', err);
+
+                            settings = null;
                         }
-                    } catch (err) {
-                        console.error('Settings import input not valid settings', err);
-        
-                        settings = null;
-                    }
-        
-                    if (settings) {
-                        self._state.eventEmitter.emit(
-                            Util.eventKeys.DISPATCH_SESSION_SAVE, self._state.wallet.getActiveAccount().address, settings
-                        );
+
+                        if (settings) {
+                            self._state.eventEmitter.emit(
+                                Util.eventKeys.DISPATCH_SESSION_SAVE, self._state.wallet.getActiveAccount().address, settings
+                            );
+                        }
                     }
                 }
             );
