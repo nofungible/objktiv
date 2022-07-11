@@ -81,6 +81,8 @@
         this._applySessionPreferences();
         this._addEventHandlers();
         this._attachGestureHandlers();
+
+        document.getElementById('content').classList.remove('hidden');
     };
 
     window.View = View;
