@@ -233,6 +233,7 @@ body.night #cta-banner {
 	position: absolute;
 	width: 100%;
 	height: 100%;
+	text-align: center;
 }
 
 #token-view-content {
@@ -242,7 +243,6 @@ body.night #cta-banner {
 	left: 0;
 	right: 0;
 	vertical-align: middle;
-	background: black;
 }
 
 #token-view-content-nav {
@@ -407,16 +407,34 @@ body.night #token-view-content-nav {
 }
 
 #image-resource {
-	width: 100%;
+	display: inline-block;
+}
+
+#image-resource.square {
+	width: auto;
 	height: 100%;
-	background-size: contain;
-	background-position: center;
-	background-repeat: no-repeat;
+}
+
+#image-resource.portrait {
+	width: auto;
+	height: 100%;
+}
+
+#image-resource.landscape {
+	width: 100%;
+	height: auto;
 }
 
 #video-resource {
 	width: 100%;
 	height: 100%;
+}
+
+#token-artifact-view-loading-screen {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 999999999;
 }
 
 #interactive-resource {

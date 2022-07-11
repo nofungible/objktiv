@@ -17,6 +17,7 @@
     TokenArtifactView.prototype = Object.create(View.prototype);
 
     TokenArtifactView.prototype.render = function() {
+        document.getElementById('cta-banner').classList.add('hidden');
         this._super.render();
 
         /**
@@ -56,7 +57,38 @@
 
         var resourceIpfsAddress = this._state.view.metadata.ipfsUrl;
         var htmlEmbedElementMap = {
-            image: '<div id="image-resource" style="background-image: url(' + resourceIpfsAddress + ')"></div>',
+            image: function (src) {
+                var img = document.createElement('img');
+
+                img.src = src;
+                img.id = 'image-resource';
+                img.onerror = function () {
+                    document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+                };
+
+                img.classList.add('hidden');
+                resizeImage();
+
+                function resizeImage() {
+                    var w = img.naturalWidth;
+                    var h = img.naturalHeight;
+
+                    if (!w && !h) {
+                        return setTimeout(resizeImage, 100);
+                    }
+
+                    if (w < h && (w < (h * .98))) {
+                        img.classList.add('portrait');
+                    } else {
+                        img.classList.add('square');
+                    }
+
+                    document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+                    img.classList.remove('hidden');
+                } ;
+
+                document.getElementById('token-view-content').appendChild(img);
+            },
             video: '<video id="video-resource" autoplay loop controls muted><source src="' + resourceIpfsAddress + '"></video>',
             model: '<model-viewer id="model-resource" src="' + resourceIpfsAddress + '" camera-controls ar ar-modes="webxr scene-viewer quick-look"></model-viewer>',
         };
@@ -69,7 +101,12 @@
          */
 
         if (htmlEmbedElementMap[fileType]) {
-            document.getElementById('token-view-content').innerHTML = htmlEmbedElementMap[fileType];
+            if (typeof htmlEmbedElementMap[fileType] === 'function') {
+                htmlEmbedElementMap[fileType](resourceIpfsAddress);
+            } else {
+                document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+                document.getElementById('token-view-content').innerHTML = htmlEmbedElementMap[fileType];
+            }
         } else {
             var iframeEl = document.createElement('iframe');
 
@@ -164,18 +201,18 @@
         colorMenu.appendChild(colorOption);
     }
 
-    TokenArtifactView.prototype._applySessionPreferences = function() {
-        this._super._applySessionPreferences();
+    // TokenArtifactView.prototype._applySessionPreferences = function() {
+    //     this._super._applySessionPreferences();
 
-        /**
-         * Apply users viewer background color preference. 
-         */
+    //     /**
+    //      * Apply users viewer background color preference. 
+    //      */
 
-        var selectedColor = this._state.session.viewerBgColor;
+    //     var selectedColor = this._state.session.viewerBgColor;
 
-        document.getElementById('selected-bg-color').style.background = selectedColor;
-        document.getElementById('token-view-content').style.background = selectedColor;
-    };
+    //     document.getElementById('selected-bg-color').style.background = selectedColor;
+    //     document.getElementById('token-view-content').style.background = selectedColor;
+    // };
 
     TokenArtifactView.prototype._attachGestureHandlers = function() {
         var self = this;
