@@ -37,7 +37,7 @@
          */
 
         this._el.getElementsByClassName('new-gallery-submit').item(0).addEventListener('click', function (evt) {
-            this.submitNewGallery.bind(this);
+            this.submitNewGallery();
         }.bind(this));
 
         input.addEventListener('keypress', function(evt) {

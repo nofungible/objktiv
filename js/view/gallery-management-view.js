@@ -28,10 +28,7 @@
                 + '"' + galleryMetadata.displayName + '"'
                 + ' by viewing your token collection, and opening a token\'s settings menu.';
 
-            this._state.assistant.loadText(galleryCreateMessage, {
-                chatter: true,
-                reason: 'GALLERY_MANAGEMENT_VIEW:' + Util.eventKeys.GALLERY_CREATE
-            });
+            this._state.assistant.loadText(galleryCreateMessage);
         }.bind(this));
     };
 
