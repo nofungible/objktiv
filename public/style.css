@@ -2457,6 +2457,7 @@ body.night #basic-assistant-engine-button-container .basic-assistant-engine-inpu
 	z-index: 999;
 }
 
+#basic-assistant-engine-default-avatar-img,
 #basic-assistant-engine-avatar-img {
 	display: block;
 	width: 100%;

@@ -149,9 +149,7 @@
 
     function addEventListeners(state, sessionStore) {
         state.eventEmitter.on(Util.eventKeys.DISPATCH_WALLET_SYNC, function () {
-            if (state.wallet.isSyncing) {
-                return false;
-            } else if (state.wallet.getActiveAccount().anonymous) {
+            if (state.wallet.getActiveAccount().anonymous) {
                 state.assistant.loadText('Initiating wallet synchronization subroutine!\n\nPlease hold.', {
                     callback: function () {
                         return state.wallet.sync()
@@ -172,7 +170,7 @@
                 'Are you sure you want to disconnect your wallet?'
                 , {
                     confirmCallback: function () {
-                        state.assistant.loadText('System rebooting...\n.\n.\n.\n.\n.', {
+                        state.assistant.loadText('System rebooting\n.\n.\n.\n.\n.', {
                             wait: 250,
                             callback: function () {
                                 setTimeout(function () {
