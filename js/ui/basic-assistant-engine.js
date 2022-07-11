@@ -48,27 +48,34 @@
     };
 
     BasicAssistantEngine.prototype.loadAvatar = function () {
+        document.getElementById('basic-assistant-engine-default-avatar-img').classList.add('hidden');
+
+        var existingAvatarImg = document.getElementById('basic-assistant-engine-avatar-img');
+
+        existingAvatarImg && existingAvatarImg.remove();
+
         var tid = this._state.session.assistant && this._state.session.assistant.avatar && this._state.session.assistant.avatar.tid;
-        var ipfsCid = 'QmdpiWPhdcu3PYc2YHQyLSuoF9AnA5F74jDfAWdNJRMmNL';
 
         if (tid) {
             var addressCollection = this._state.tokens.getCollection(this._state.wallet.getActiveAccount().address);
             var token = addressCollection && addressCollection.tidTokenMap && addressCollection.tidTokenMap[tid];
 
             if (token) {
-                ipfsCid = token.displayArtifactIpfsAddress.substring(7);
+                document.getElementById('basic-assistant-engine-default-avatar-img').classList.add('hidden');
+
+                var avatar = document.createElement('img');
+
+                avatar.id = 'basic-assistant-engine-avatar-img';
+
+                var ipfsCid = token.displayArtifactIpfsAddress.substring(7);
+
+                avatar.src = this._state.session.defaultGateway + '/ipfs/' + ipfsCid;
+
+                return document.getElementById('basic-assistant-engine-avatar-img-wrapper').appendChild(avatar);
             }
         }
 
-        var avatar = document.createElement('img');
-
-        avatar.id = 'basic-assistant-engine-avatar-img';
-        avatar.src = this._state.session.defaultGateway + '/ipfs/' + ipfsCid;
-
-        var existingAvatarImg = document.getElementById('basic-assistant-engine-avatar-img');
-
-        existingAvatarImg && existingAvatarImg.remove();
-        document.getElementById('basic-assistant-engine-avatar-img-wrapper').appendChild(avatar);
+        document.getElementById('basic-assistant-engine-default-avatar-img').classList.remove('hidden');
     };
 
     BasicAssistantEngine.prototype.loadText = function (str, opts) {
