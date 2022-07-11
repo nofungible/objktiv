@@ -491,7 +491,13 @@
 
         imgLink.classList.add('token-artifact-preview-wrapper');
 
-        imgLink.href = this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7);
+        imgLink.href = Util.getHost() + Util.querystring({
+            view: 'artifact',
+            ipfs: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
+            title: objkt.name,
+            mime: objkt.mime
+        }).toString();
+
         imgLink.target = '_blank';
 
         var img = document.createElement('img');
@@ -759,23 +765,28 @@
                         imgWidth = imgWidth * .60;
                     }
 
-                    // var url = Util.getHost() + Util.querystring({
-                    //     view: 'artifact',
-                    //     ipfs: imageTag.src = this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
-                    //     title: objkt.name,
-                    //     mime: objkt.mime,
-                    //     cw: imgWidth,
-                    //     ch: imgHeight
-                    // }).toString();
+                    var url = Util.getHost() + Util.querystring({
+                        view: 'artifact',
+                        ipfs: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
+                        title: objkt.name,
+                        mime: objkt.mime,
+                        cw: imgWidth,
+                        ch: imgHeight
+                    }).toString();
 
-                    var url = this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7);
+                    // var url = this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7);
 
                     window.open(url, '_blank', 'left=0,top=0,innerWidth=' + imgWidth + ',innerHeight=' + imgHeight);
                 }
             },
             {
                 text: 'View in New Tab',
-                href: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7)
+                href: Util.getHost() + Util.querystring({
+                    view: 'artifact',
+                    ipfs: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
+                    title: objkt.name,
+                    mime: objkt.mime
+                }).toString()
             }
         ];
 
