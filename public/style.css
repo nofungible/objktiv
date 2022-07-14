@@ -2401,9 +2401,6 @@ body.night .triangle-border.left:before {
 
 /* creates the smaller  triangle */
 body.night .triangle-border.left:after {
-	bottom:53px;
-	left:-17px; /* value = - border-left-width - border-right-width */
-	border-width:5px 17px 5px 0;
 	border-color:transparent #333;
 }
 
