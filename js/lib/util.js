@@ -135,6 +135,22 @@
         return window.location.href.split('#')[0].split('?')[0];
     };
 
+    Util.isMobile = function () {
+        var toMatch = [
+            /Android/i,
+            /webOS/i,
+            /iPhone/i,
+            /iPad/i,
+            /iPod/i,
+            /BlackBerry/i,
+            /Windows Phone/i
+        ];
+
+        return toMatch.some(function (toMatchItem) {
+            return navigator.userAgent.match(toMatchItem);
+        });
+    };
+
     Util.navigateHome = function () {
         window.location.href = Util.getHost() + '?view=collection';
     };

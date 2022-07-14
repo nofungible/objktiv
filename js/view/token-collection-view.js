@@ -340,7 +340,7 @@
         var resizeTimeout;
 
         window.addEventListener('resize', (function () {
-            if (isMobile()) {
+            if (Util.isMobile()) {
                 return false;
             }
 
@@ -365,22 +365,6 @@
 
             document.getElementById('main-content').classList.add('hidden', 'transparent');
             document.getElementById('main-content-loading-screen').classList.remove('hidden', 'transparent');
-
-            function isMobile() {
-                var toMatch = [
-                    /Android/i,
-                    /webOS/i,
-                    /iPhone/i,
-                    /iPad/i,
-                    /iPod/i,
-                    /BlackBerry/i,
-                    /Windows Phone/i
-                ];
-                
-                return toMatch.some(function (toMatchItem) {
-                    return navigator.userAgent.match(toMatchItem);
-                });
-            }
         }).bind(this));
 
         /**
@@ -752,6 +736,18 @@
                 href: objkt.platformUri
             },
             {
+                text: 'View in New Tab',
+                href: Util.getHost() + Util.querystring({
+                    view: 'artifact',
+                    ipfs: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
+                    title: objkt.name,
+                    mime: objkt.mime
+                }).toString()
+            }
+        ];
+
+        if (!Util.isMobile()) {
+            menuOptions.push({
                 text: 'View in New Window',
                 handler: function () {
                     this._state.assistant.loadText('Deploying Pop-Out viewer!', {reason: 'OPEN_POP_OUT_VIEWER', chatter: true});
@@ -779,17 +775,8 @@
 
                     window.open(url, '_blank', 'left=0,top=0,innerWidth=' + imgWidth + ',innerHeight=' + imgHeight);
                 }
-            },
-            {
-                text: 'View in New Tab',
-                href: Util.getHost() + Util.querystring({
-                    view: 'artifact',
-                    ipfs: this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7),
-                    title: objkt.name,
-                    mime: objkt.mime
-                }).toString()
-            }
-        ];
+            });
+        }
 
         if (!this._state.view.metadata.isAnonymousTargetAddress) {
             menuOptions.push({
