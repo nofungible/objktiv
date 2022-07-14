@@ -2386,6 +2386,10 @@ body.night #settings-management-view #gateway-select-container #gateway-select-o
 	border-width:8px 22.5px 8px 0;
 	border-color:transparent #666;
 }
+
+body.night .triangle-border.left:before {
+	border-color:transparent #81d68b;
+}
   
 /* creates the smaller  triangle */
 .triangle-border.left:after {
@@ -2393,6 +2397,14 @@ body.night #settings-management-view #gateway-select-container #gateway-select-o
 	left:-17px; /* value = - border-left-width - border-right-width */
 	border-width:5px 17px 5px 0;
 	border-color:transparent #fafafa;
+}
+
+/* creates the smaller  triangle */
+body.night .triangle-border.left:after {
+	bottom:53px;
+	left:-17px; /* value = - border-left-width - border-right-width */
+	border-width:5px 17px 5px 0;
+	border-color:transparent #333;
 }
 
 .triangle-border.left {
