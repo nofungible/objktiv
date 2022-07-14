@@ -56,99 +56,185 @@
          */
 
         var resourceIpfsAddress = this._state.view.metadata.ipfsUrl;
+
         var htmlEmbedElementMap = {
             image: function (src) {
                 var img = document.createElement('img');
 
+                img.setAttribute('priority', 'high');
+
                 img.src = src;
                 img.id = 'image-resource';
                 img.onerror = function () {
-                    document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+
                 };
 
+                // Hide img until it's resized
                 img.classList.add('hidden');
-                resizeImage();
+
+                resizeImage.call(this, img);
 
                 function resizeImage() {
                     var w = img.naturalWidth;
                     var h = img.naturalHeight;
+                    var windowW = window.innerWidth; 
+                    var windowH = window.innerHeight;
 
-                    if (!w && !h) {
-                        return setTimeout(resizeImage, 100);
+                    if (!w || !h) {
+                        return setTimeout(resizeImage.bind(this), 100);
                     }
 
-                    if (w < h && (w < (h * .98))) {
-                        img.classList.add('portrait');
-                    } else {
-                        img.classList.add('square');
+                    var sizeMod = this._state.view.metadata.windowed ? 1 : .8;
+
+                    if (w > windowW * sizeMod) {
+                        img.style.width = (windowW * sizeMod) + 'px';
+                        img.style.height = 'auto';
+                    }
+
+                    if (h > windowH * sizeMod) {
+                        img.style.height = (windowH * sizeMod) + 'px';
+                        img.style.width = 'auto';
                     }
 
                     document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
                     img.classList.remove('hidden');
-                } ;
+                }
 
                 document.getElementById('token-view-content').appendChild(img);
-            },
-            video: '<video id="video-resource" autoplay loop controls muted><source src="' + resourceIpfsAddress + '"></video>',
-            model: '<model-viewer id="model-resource" src="' + resourceIpfsAddress + '" camera-controls ar ar-modes="webxr scene-viewer quick-look"></model-viewer>',
+            }.bind(this),
+            video: function (src) {
+                var video = document.createElement('video');
+
+                video.id = "video-resource";
+
+                video.setAttribute('autoplay', '');
+                video.setAttribute('loop', '');
+                video.setAttribute('controls', '');
+
+                var source = document.createElement('source');
+
+                source.setAttribute('src', src);
+
+                // Hide video until it's resized
+                video.classList.add('hidden');
+
+                video.onloadeddata = video.onloadedmetadata = function () {
+                    var w = video.videoWidth;
+                    var h = video.videoHeight;
+                    var windowW = window.innerWidth; 
+                    var windowH = window.innerHeight;
+
+                    var sizeMod = this._state.view.metadata.windowed ? 1 : .8;
+
+                    if (w > windowW * sizeMod) {
+                        video.style.width = (windowW * sizeMod) + 'px';
+                        video.style.height = 'auto';
+                    }
+
+                    if (h > windowH * sizeMod) {
+                        video.style.height = (windowH * sizeMod) + 'px';
+                        video.style.width = 'auto';
+                    }
+
+                    document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+                    video.classList.remove('hidden');
+                }.bind(this);
+
+                video.onerror = function () {
+
+                };
+
+                video.appendChild(source);
+                document.getElementById('token-view-content').appendChild(video);
+            }.bind(this),
+            // model: function (src) {
+            //     var modelViewer = document.createElement('model-viewer');
+
+            //     modelViewer.classList.add('model-resource');
+            //     modelViewer.setAttribute('camera-controls', '');
+            //     modelViewer.setAttribute('ar', '');
+            //     modelViewer.setAttribute('ar-modes', 'webxr scene-viewer quick-look');
+            //     modelViewer.setAttribute('src', src);
+
+            //     var windowW = window.innerWidth; 
+            //     var windowH = window.innerHeight;
+
+            //     if (windowW < windowH) {
+            //         modelViewer.style.width = (windowW * .8) + 'px';
+            //         modelViewer.style.height = (windowW * .8) + 'px';
+            //     } else {
+            //         modelViewer.style.height = (windowH * .8) + 'px';
+            //         modelViewer.style.width = (windowH * .8) + 'px';
+            //     }
+
+            //     document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
+            //     document.getElementById('token-view-content').appendChild(modelViewer);
+            // },
+            model: '<model-viewer class="model-resource" camera-controls ar ar-modes="webxr scene-viewer quick-look" src="' + resourceIpfsAddress + '"></model-viewer>',
+            pdf: '<iframe class="pdf-resource" src="' + resourceIpfsAddress + '"></iframe>'
         };
 
         var mimeType = this._state.view.metadata.type;
         var fileType = mimeType.split('/')[0];
+        var subType = mimeType.split('/')[1];
+        var handler = htmlEmbedElementMap[fileType] || htmlEmbedElementMap[subType];
 
         /**
          * Embed simple HTML element or create, embed, and update src for iframe element.
          */
 
-        if (htmlEmbedElementMap[fileType]) {
-            if (typeof htmlEmbedElementMap[fileType] === 'function') {
-                htmlEmbedElementMap[fileType](resourceIpfsAddress);
+        if (handler) {
+            if (typeof handler === 'function') {
+                handler(resourceIpfsAddress);
             } else {
                 document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
-                document.getElementById('token-view-content').innerHTML = htmlEmbedElementMap[fileType];
+                document.getElementById('token-view-content').innerHTML = handler;
             }
         } else {
             var iframeEl = document.createElement('iframe');
 
             iframeEl.setAttribute('id', 'interactive-resource');
 
+            document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
             document.getElementById('token-view-content').appendChild(iframeEl);
             iframeEl.setAttribute('src', resourceIpfsAddress);
         }
 
-        var clientHeight = this._state.urlQuerystrings.ch && parseInt(this._state.urlQuerystrings.ch);
-        var heightDelta = 0;
+        // document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
 
-        if (clientHeight) {
-            var contentHeight = document.getElementById('content').clientHeight;
+        // var clientHeight = this._state.urlQuerystrings.ch && parseInt(this._state.urlQuerystrings.ch);
+        // var heightDelta = 0;
 
-            var heightDelta;
+        // if (clientHeight) {
+        //     var contentHeight = document.getElementById('content').clientHeight;
 
-            if (contentHeight < clientHeight) {
-                heightDelta = clientHeight - contentHeight;
-            } else if (contentHeight > clientHeight) {
-                heightDelta =  (contentHeight - clientHeight) * -1;
-            }
-        }
+        //     var heightDelta;
 
-        var clientWidth = this._state.urlQuerystrings.ch && parseInt(this._state.urlQuerystrings.cw);
-        var widthDelta = 0;
+        //     if (contentHeight < clientHeight) {
+        //         heightDelta = clientHeight - contentHeight;
+        //     } else if (contentHeight > clientHeight) {
+        //         heightDelta =  (contentHeight - clientHeight) * -1;
+        //     }
+        // }
 
-        if (clientWidth) {
-            var contentWidth = document.getElementById('content').clientWidth;
+        // var clientWidth = this._state.urlQuerystrings.ch && parseInt(this._state.urlQuerystrings.cw);
+        // var widthDelta = 0;
 
-            if (contentWidth < clientWidth) {
-                widthDelta = clientWidth - contentWidth;
-            } else if (contentWidth > clientWidth) {
-                widthDelta =  (contentWidth - clientWidth) * -1;
-            }
-        }
+        // if (clientWidth) {
+        //     var contentWidth = document.getElementById('content').clientWidth;
 
-        window.resizeBy(Math.floor(widthDelta), Math.floor(heightDelta));
+        //     if (contentWidth < clientWidth) {
+        //         widthDelta = clientWidth - contentWidth;
+        //     } else if (contentWidth > clientWidth) {
+        //         widthDelta =  (contentWidth - clientWidth) * -1;
+        //     }
+        // }
+
+        // window.resizeBy(Math.floor(widthDelta), Math.floor(heightDelta));
 
 
-        // Fit the content to the footer dynamically since footer is absolute position w/ dynamic height
-        this._fitContentToFooter();
+        // // Fit the content to the footer dynamically since footer is absolute position w/ dynamic height
+        // this._fitContentToFooter();
 
         // Reveal page view
         document.getElementById('token-view-content').classList.remove('hidden');
@@ -273,6 +359,7 @@
 
         this._state.view.metadata.title = state.urlQuerystrings.title;
         this._state.view.metadata.ipfsUrl = state.urlQuerystrings.ipfs;
+        this._state.view.metadata.windowed = state.urlQuerystrings.windowed === 'true';
         this._state.view.metadata.issuer = {
             name: state.urlQuerystrings.issuer,
         };
