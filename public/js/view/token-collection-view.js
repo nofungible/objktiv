@@ -771,7 +771,8 @@
                         title: objkt.name,
                         mime: objkt.mime,
                         cw: imgWidth,
-                        ch: imgHeight
+                        ch: imgHeight,
+                        windowed: true,
                     }).toString();
 
                     // var url = this._state.session.defaultGateway + '/ipfs/' + objkt.ipfsLink.substring(7);
