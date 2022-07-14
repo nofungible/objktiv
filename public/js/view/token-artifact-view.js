@@ -86,14 +86,26 @@
 
                     var sizeMod = this._state.view.metadata.windowed ? 1 : .8;
 
-                    if (w > windowW * sizeMod) {
-                        img.style.width = (windowW * sizeMod) + 'px';
-                        img.style.height = 'auto';
-                    }
+                    if (windowW > windowH) {
+                        if (w > windowW * sizeMod) {
+                            img.style.width = (windowW * sizeMod) + 'px';
+                            img.style.height = 'auto';
+                        }
 
-                    if (h > windowH * sizeMod) {
-                        img.style.height = (windowH * sizeMod) + 'px';
-                        img.style.width = 'auto';
+                        if (h > windowH * sizeMod) {
+                            img.style.height = (windowH * sizeMod) + 'px';
+                            img.style.width = 'auto';
+                        }
+                    } else {
+                        if (h > windowH * sizeMod) {
+                            img.style.height = (windowH * sizeMod) + 'px';
+                            img.style.width = 'auto';
+                        }
+
+                        if (w > windowW * sizeMod) {
+                            img.style.width = (windowW * sizeMod) + 'px';
+                            img.style.height = 'auto';
+                        }
                     }
 
                     document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
@@ -126,14 +138,26 @@
 
                     var sizeMod = this._state.view.metadata.windowed ? 1 : .8;
 
-                    if (w > windowW * sizeMod) {
-                        video.style.width = (windowW * sizeMod) + 'px';
-                        video.style.height = 'auto';
-                    }
+                    if (windowW > windowH) {
+                        if (w > windowW * sizeMod) {
+                            video.style.width = (windowW * sizeMod) + 'px';
+                            video.style.height = 'auto';
+                        }
 
-                    if (h > windowH * sizeMod) {
-                        video.style.height = (windowH * sizeMod) + 'px';
-                        video.style.width = 'auto';
+                        if (h > windowH * sizeMod) {
+                            video.style.height = (windowH * sizeMod) + 'px';
+                            video.style.width = 'auto';
+                        }
+                    } else {
+                        if (h > windowH * sizeMod) {
+                            video.style.height = (windowH * sizeMod) + 'px';
+                            video.style.width = 'auto';
+                        }
+
+                        if (w > windowW * sizeMod) {
+                            video.style.width = (windowW * sizeMod) + 'px';
+                            video.style.height = 'auto';
+                        }
                     }
 
                     document.getElementById('token-artifact-view-loading-screen').classList.add('hidden');
