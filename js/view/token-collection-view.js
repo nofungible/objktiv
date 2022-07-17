@@ -346,10 +346,10 @@
 
             resizeTimeout && clearTimeout(resizeTimeout);
 
-            document.getElementsByClassName('token-artifact-preview-wrapper') && Array.prototype.slice.call(document.getElementsByClassName('token-artifact-preview-wrapper'), 0).forEach(function (wrapper) {
-                wrapper.style.width = 'auto';
-                wrapper.style.height = 'auto';
-            });
+            // document.getElementsByClassName('token-artifact-preview-wrapper') && Array.prototype.slice.call(document.getElementsByClassName('token-artifact-preview-wrapper'), 0).forEach(function (wrapper) {
+            //     wrapper.style.width = 'auto';
+            //     wrapper.style.height = 'auto';
+            // });
 
             resizeTimeout = setTimeout(function () {
                 document.getElementById('main-content-loading-screen').classList.add('hidden', 'transparent');
