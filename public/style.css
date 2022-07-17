@@ -1679,6 +1679,14 @@ body.night .token-container {
 
 .token-artifact-preview-wrapper {
 	display: inline-block;
+	width: 100%;
+	height: 100%;
+}
+
+.masonry-grid .token-artifact-preview-wrapper {
+	display: inline-block;
+	width: auto;
+	height: auto;
 }
 
 .masonry-grid .token-artifact-preview-wrapper {
@@ -2730,12 +2738,17 @@ body.night #basic-assistant-engine-button-container .basic-assistant-engine-inpu
 		border: none;
 	}
 
+
 	#gallery-management-content {
 		padding: 0;
 	}
 
 	#gallery-metadata-container {
 		padding: 12.5px;
+	}
+
+	#gallery-management-view #gallery-list-container {
+		margin: 0;
 	}
 
 	#gallery-list-container {
