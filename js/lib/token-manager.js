@@ -129,7 +129,8 @@
                         }
     
                         if (isComplete && !isFirstPass && !options.anonymous) {
-                            this._state.assistant.loadText('Token indexing complete!\n\nI\'ll be sure keep your collection up-to-date!');
+                            // @TODO move to assistant event handlers
+                            this._state.assistant.loadText('Token indexing complete!');
                         }
     
                         if (!isComplete) {
@@ -263,7 +264,7 @@
             }
 
             if (this._addressLastRefreshedMap[address]) {
-                var delta =Date.now() - this._addressLastRefreshedMap[address];
+                var delta = Date.now() - this._addressLastRefreshedMap[address];
 
                 if (delta < COLLECTION_REFRESH_DELAY_IN_MILLIS) {
                     return setTimeout(function () {
@@ -271,6 +272,9 @@
                     }.bind(this), COLLECTION_REFRESH_DELAY_IN_MILLIS - delta);
                 }
             }
+
+            // @TODO Migrate to assistant event handlers
+            this._state.assistant.loadText('Updating token collection!\n\nI\'ll need a moment to complete this process...');
 
             this.buildCollection(address, {
                 collectionId: 'REFRESH:' + address,

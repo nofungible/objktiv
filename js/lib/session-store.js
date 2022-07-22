@@ -5,9 +5,9 @@
     var DEFAULT_VIEWER_BG_COLOR = 'black';
     var DEFAULT_PER_PAGE = 10;
     var GATEWAY_LIST = [
+        'https://ipfs.io',
         'https://cloudflare-ipfs.com',
-        'https://gateway.pinata.cloud',
-        'https://ipfs.io'
+        'https://gateway.pinata.cloud'
     ];
 
      /**

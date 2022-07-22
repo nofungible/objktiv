@@ -23,12 +23,23 @@
             }
         }.bind(this));
 
+        // @TODO move to assistant event handlers
         this._state.eventEmitter.on(Util.eventKeys.GALLERY_CREATE, function (galleryMetadata) {
-            var galleryCreateMessage = 'Gallery created!\n\nYou can add tokens to '
-                + '"' + galleryMetadata.displayName + '"'
-                + ' by viewing your token collection, and opening a token\'s settings menu.';
+            window.objktiv.systemSession.tutorials = window.objktiv.systemSession.tutorials || {};
 
-            this._state.assistant.loadText(galleryCreateMessage);
+            if (!window.objktiv.systemSession.tutorials.galleryCreation) {
+                window.objktiv.systemSession.tutorials.galleryCreation = true;
+
+                window.localStorage.setItem('OBJKTIV_SYSTEM_SESSION', JSON.stringify(window.objktiv.systemSession));
+
+                var galleryCreateMessage = 'Gallery created!\n\nYou can add tokens to '
+                    + '"' + galleryMetadata.displayName + '"'
+                    + ' by viewing your token collection, and opening a token\'s settings menu.';
+
+                this._state.assistant.loadText(galleryCreateMessage)
+            }
+
+            this._state.assistant.loadText('Gallery created!', {chatter: true});
         }.bind(this));
     };
 
