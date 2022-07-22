@@ -23,7 +23,22 @@
      * Global Constants - Do not change these values.
      */
 
-    var DEFAULT_SESSION_STORE_KEY = 'objktiv-session-store';
+    var DEPRECATED_SESSION_STORE_KEY = 'objktiv-session-store';
+    var DEFAULT_SESSION_STORE_KEY = 'OBJKTIV_SESSION';
+    var SYSTEM_SESSION_KEY = 'OBJKTIV_SYSTEM_SESSION';
+    var SYSTEM_VERSION = '0.3.0';
+
+    var systemSession = window.localStorage.getItem(SYSTEM_SESSION_KEY);
+
+    if (systemSession) {
+        systemSession = JSON.parse(systemSession);
+    } else {
+        systemSession = {
+            version: SYSTEM_VERSION
+        };
+
+        window.localStorage.setItem(SYSTEM_SESSION_KEY, JSON.stringify(systemSession));
+    }
 
     /**
      * Global Variables
@@ -33,12 +48,15 @@
     var sessionStore = new SessionStore(DEFAULT_SESSION_STORE_KEY);
 
     // Set the default session as the current session since we haven't loaded any active wallets yet.
-    var state = initState(sessionStore.getSession());
+    var state = initState(sessionStore.getSession(), systemSession);
+
+    window.localStorage.removeItem(DEPRECATED_SESSION_STORE_KEY);
 
     // Attach app components to window element for access via the console.
     window.Objktiv = window.objktiv = {
         state: state,
         sessionStore: sessionStore,
+        systemSession: systemSession,
     };
 
     initUIElements(state);

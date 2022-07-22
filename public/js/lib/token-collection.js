@@ -1,5 +1,5 @@
 (function () {
-    var COLLECTION_KEY = 'objktiv-token-collection';
+    var COLLECTION_KEY = 'OBJKTIV_TOKEN_COLLECTION';
     var DEFAULT_LIMIT = 10;
 
     function TokenCollection(address, identifier) {

@@ -263,7 +263,7 @@
              * We want to avoid page reloads when switching collection pages bc this will force
              * the indexer to gather tokens for anonymous collections needlessly.
              */
-            if (this._state.view.metadata.collectionStyle !== 'masonry') {
+            if (this._state.view.metadata.collectionStyle !== 'masonry' && !this._state.view.metadata.isAnonymousTargetAddress) {
                 var params = Util.querystring(document.location.href).toObject();
 
                 params.page = collectionOptions.page + 1;
@@ -427,52 +427,53 @@
 
         var debounce = false;
 
-        document.addEventListener('scroll', function () {
-            if (debounce || this._state.view.metadata.disableScrollHide === true) {
-                return false;
-            }
+        // document.addEventListener('scroll', function () {
+        //     // if (debounce || this._state.view.metadata.disableScrollHide === true) {
+        //     //     return false;
+        //     // }
 
-            debounce = true;
+        //     debounce = true;
 
-            setTimeout(function () {
-                debounce = false;
-            }, 50);
+        //     setTimeout(function () {
+        //         debounce = false;
+        //     }, 250);
 
-            document.getElementsByClassName('token-artifact-preview-wrapper') && Array.prototype.slice.call(document.getElementsByClassName('token-artifact-preview-wrapper'), 0).forEach(function (wrapper) {
-                var img;
+        //     document.getElementsByClassName('token-artifact-preview-wrapper') && Array.prototype.slice.call(document.getElementsByClassName('token-artifact-preview-wrapper'), 0).forEach(function (wrapper) {
+        //         var img;
 
-                for (var i = 0; i < wrapper.childNodes.length; i++) {
-                    if (wrapper.childNodes[i].classList.contains('token-artifact-preview')) {
-                        img = wrapper.childNodes[i];
+        //         for (var i = 0; i < wrapper.childNodes.length; i++) {
+        //             if (wrapper.childNodes[i].classList.contains('token-artifact-preview')) {
+        //                 img = wrapper.childNodes[i];
 
-                        break;
-                    }        
-                }
+        //                 break;
+        //             }        
+        //         }
 
-                wrapper.offsetHeight && wrapper.getAttribute('data-macy-complete') === '1' && (wrapper.style.height = wrapper.offsetHeight + 'px');
-                wrapper.offsetWidth && wrapper.getAttribute('data-macy-complete') === '1' && (wrapper.style.width = wrapper.offsetWidth + 'px');
+        //         wrapper.offsetHeight && wrapper.getAttribute('data-macy-complete') === '1' && (wrapper.style.height = wrapper.offsetHeight + 'px');
+        //         wrapper.offsetWidth && wrapper.getAttribute('data-macy-complete') === '1' && (wrapper.style.width = wrapper.offsetWidth + 'px');
 
-                if (img) {
-                    if (!isElementInViewport(wrapper, 500)) {
-                        img.classList.add('hidden');
-                    } else {
-                        img.classList.remove('hidden');
-                    }
-                }
+        //         if (img) {
+        //             if (!isElementInViewport(wrapper, 500)) {
+        //                 img.classList.add('transparent');
+        //             } else {
+        //                 img.classList.remove('transparent');
+        //             }
+        //         }
 
-                function isElementInViewport (el, limit) {
-                    var vHeight = window.innerHeight || document.documentElement.clientHeight;
-                    var rect = el.getBoundingClientRect();
+        //         function isElementInViewport (el, limit) {
+        //             var vHeight = window.innerHeight || document.documentElement.clientHeight;
+        //             var rect = el.getBoundingClientRect();
 
-                    return (rect.bottom > limit * -1) && (rect.top < vHeight + limit);
-                } 
-            }.bind(this));
-        }.bind(this));
+        //             return (rect.bottom > limit * -1) && (rect.top < vHeight + limit);
+        //         } 
+        //     }.bind(this));
+        // }.bind(this));
     };
 
     CollectionView.prototype._createTokenContainer = function (objkt) {
         var imgLink = document.createElement('a');
 
+        // @TODO make img links and images siblings. This is preventing full sized image links before image preview load is complete.
         imgLink.classList.add('token-artifact-preview-wrapper');
 
         imgLink.href = Util.getHost() + Util.querystring({
@@ -527,6 +528,7 @@
                     this._state.holds = this._state.holds.slice(1);
 
                     img.classList.remove('transparent', 'placeholder');
+                    // img.setAttribute('data-load-complete', 'true');
 
                     if (this._state.view.metadata.macy) {
                         this._state.view.metadata.macy.recalculate(true);
@@ -1033,12 +1035,68 @@
         // }
 
         // return this._state.tokens.getCollectionByWallet(this._state, viewMeta.targetAddress, viewMeta.galleryMap, viewMeta.issuerAddress)
-        var collectionIndex = this._state.tokens.getCollection(this._state.view.metadata.targetAddress)
+        var collectionIndex = this._state.tokens.getCollection(this._state.view.metadata.targetAddress);
+
+        window.objktiv.systemSession.tutorials = window.objktiv.systemSession.tutorials || {};
 
         // No token collection for address
         if (!collectionIndex) {
-            if (options.attempts > 2) {
-                this._state.assistant.loadText('No tokens found. I\'ll try to gather some from the network.', {chatter: true});
+            if (!options.attempts) {
+                if (this._state.view.metadata.isAnonymousTargetAddress) {
+
+                    if (!window.objktiv.systemSession.tutorials.anonymousViewing) {
+                        window.objktiv.systemSession.tutorials.anonymousViewing = true;
+
+                        window.localStorage.setItem('OBJKTIV_SYSTEM_SESSION', JSON.stringify(window.objktiv.systemSession));
+
+                        this._state.assistant.loadText(
+                            'Anonymous viewing mode enabled!'
+                            + '\n\nI\'ll need to gather this wallet\'s tokens from the network for viewing.'
+                            , {
+                                wait: 3000,
+                                callback: function () {
+                                    this._state.assistant.loadText(
+                                        'Since this collection is anonymous I won\'t be saving it locally.\n\nYour viewing options may be limited compared to viewing your own collection.'
+                                        , {
+                                            wait: 3000
+                                        }
+                                    );
+                                }.bind(this)
+                            }
+                        );
+                    }
+                } else {
+                    if (!window.objktiv.systemSession.tutorials.firstTimeSignIn) {
+                        window.objktiv.systemSession.tutorials.firstTimeSignIn = true;
+
+                        window.localStorage.setItem('OBJKTIV_SYSTEM_SESSION', JSON.stringify(window.objktiv.systemSession));
+
+                        this._state.assistant.loadText(
+                            'Now that you\'re connected I can gather your token metadata and build a local index.'
+                            , {
+                                wait: 4000,
+                                callback: function () {
+                                    this._state.assistant.loadText(
+                                        'This will allow me to display your token collection in new ways, such as by file type, by artist, and by smart contract!'
+                                        , {
+                                            wait: 3000,
+                                            callback: function () {
+                                                this._state.assistant.loadText(
+                                                    'You can use the various hyperlinks in a token\'s frame to navigate to different collection views.'
+                                                    , {
+                                                        wait: 3000
+                                                    }
+                                                );
+                                            }.bind(this)
+                                        }
+                                    );
+                                }.bind(this)
+                            }
+                        );
+                    }
+                }
+            } else if (options.attempts > 2) {
+                this._state.assistant.loadText('I seem to be having trouble gathering token metadata from the network\n\nPlease hold.', {chatter: true});
             }
 
             console.log('No tokens for _renderCollection');

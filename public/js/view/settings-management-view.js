@@ -140,6 +140,14 @@
         this.setExportText();
         this.setAvatarText();
 
+        if (!this._state.wallet.getActiveAccount().anonymous) {
+            var authenticatedSettings = document.getElementsByClassName('authenticated-settings-item');
+
+            for (var i = 0; i < authenticatedSettings.length; i++) {
+                authenticatedSettings[i].classList.remove('hidden');
+            }
+        }
+
         document.getElementById('settings-management-view').classList.remove('hidden');
     }
 

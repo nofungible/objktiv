@@ -94,7 +94,7 @@
 
         this.reveal();
 
-        setTimeout(function () {
+        this._loadTextTimeout = setTimeout(function () {
             textLoader.call(this, str);
         }.bind(this), 100);
 

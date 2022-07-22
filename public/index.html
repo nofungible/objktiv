@@ -49,9 +49,9 @@
                     <div id="wallet-nav" class="hidden">
                         <a id="settings-link" class="sidebar-link" href="/?view=collection">collection</a>
                         <a id="galleries-link" class="sidebar-link" href="/?view=galleries">galleries</a>
-                        <a id="settings-link" class="sidebar-link" href="/?view=settings">settings</a>
                     </div>
                     <a id="sync" class="sidebar-link" href="#">sync</a>
+                    <a id="settings-link" class="sidebar-link" href="/?view=settings">settings</a>
                     <a id="day-night-toggle" class="sidebar-link" href="#">day/night</a>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     <p id="settings-management-header" class="page-view-header">YOUR SETTINGS</p>
                     <div id="settings-management-content">
                         <!-- Export Settings -->
-                        <div class="settings-item">
+                        <div class="settings-item authenticated-settings-item hidden">
                             <p class="settings-item-header">EXPORT SETTINGS</p>
                             <div id="settings-export-container">
                                 <p id="settings-export-text" class="interactive"></p>
@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- Import Settings -->
-                        <div class="settings-item">
+                        <div class="settings-item authenticated-settings-item hidden">
                             <p class="settings-item-header">IMPORT SETTINGS</p>
                             <div id="settings-import-container">
                                 <div id="settings-import-input" contenteditable wrap='off'></div>
@@ -114,7 +114,7 @@
                         </div>
 
                         <!-- Assistant Settings -->
-                        <div class="settings-item">
+                        <div class="settings-item authenticated-settings-item hidden">
                             <p class="settings-item-header">ASSISTANT SETTINGS</p>
                             <div id="assistant-settings-container">
                                 <span>ASSISTANT_AVATAR:</span>
