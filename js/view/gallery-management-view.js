@@ -37,9 +37,9 @@
                     + ' by viewing your token collection, and opening a token\'s settings menu.';
 
                 this._state.assistant.loadText(galleryCreateMessage)
+            } else {
+                this._state.assistant.loadText('Gallery created!', {chatter: true});
             }
-
-            this._state.assistant.loadText('Gallery created!', {chatter: true});
         }.bind(this));
     };
 

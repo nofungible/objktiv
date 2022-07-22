@@ -143,7 +143,7 @@
                             if (options.refresh) {
                                 // Set last refreshed time to now if we finished the collection for the first time.
                                 if (!isFirstPass && !this._addressLastRefreshedMap[address]) {
-                                    this._addressLastRefreshedMap[address] = Date.now();
+                                    this._addressLastRefreshedMap[address] = this._state.session.collectionLastRefreshedAt = Date.now();
     
                                     this._state.eventEmitter.emit(Util.eventKeys.DISPATCH_SESSION_SAVE, this._state.wallet.getActiveAccount().address, this._state.session);
                                 }
