@@ -36,7 +36,12 @@
                     + '"' + galleryMetadata.displayName + '"'
                     + ' by viewing your token collection, and opening a token\'s settings menu.';
 
-                this._state.assistant.loadText(galleryCreateMessage)
+                this._state.assistant.loadText(galleryCreateMessage, {
+                    wait: 4000,
+                    callback: function () {
+                        this._state.assistant.loadText('You can share your gallery with others by highlighting a gallery, and copying its [SHARE] URL.', {wait: 4000});
+                    }.bind(this)
+                })
             } else {
                 this._state.assistant.loadText('Gallery created!', {chatter: true});
             }
